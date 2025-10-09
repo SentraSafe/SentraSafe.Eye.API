@@ -1,5 +1,8 @@
 # SentraSafe Eye API
-![SentraSafe Logo](https://github.com/SentraSafe/SentraSafe.Eye.API/blob/ade789c29f9507c6e5485b5255aed5f0164b0fe4/SentraSafeLogo.png)
+
+<p align="center">  
+<img src="https://github.com/SentraSafe/SentraSafe.Eye.API/blob/ade789c29f9507c6e5485b5255aed5f0164b0fe4/SentraSafeLogo.png">
+</p>
 
 ## Todo
 
