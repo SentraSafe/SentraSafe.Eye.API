@@ -6,6 +6,7 @@ using System.Text.Json;
 using MQTTnet;
 using System.Text;
 using System.Diagnostics;
+using MongoDB.Driver;
 
 namespace EYEAPI.BackgroundServices
 {
@@ -15,6 +16,7 @@ namespace EYEAPI.BackgroundServices
         {
             await mqttService.Connect();
             await mqttService.Subscribe("measurement/DHT11-1/temperature", OnMessageReceived);
+
             Console.WriteLine("Background service started");
         }
 
@@ -30,7 +32,7 @@ namespace EYEAPI.BackgroundServices
         {
             var payload = eventArgs.ApplicationMessage.ConvertPayloadToString();
             Measurement? telemetry = JsonSerializer.Deserialize<Measurement>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            Console.WriteLine($"-----------------\n{telemetry.Id}\n{telemetry.Device}\n{telemetry.MeasurementType}\n{telemetry.Location}\n{telemetry.ReadingTime}\n{telemetry.Value}");
+            Console.WriteLine($"-----------------\n{telemetry.ReadingTime}\n{telemetry.MeasurementType}\n{telemetry.Device}\n{telemetry.Value}\n{telemetry.Location}\n{DateTimeOffset.FromUnixTimeSeconds(telemetry.ReadingTime).ToUniversalTime()}");
             return;
 
             if (telemetry != null)

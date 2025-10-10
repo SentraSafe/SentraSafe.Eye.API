@@ -4,7 +4,6 @@
     {
         public MqttBroker MqttBroker { get; set; }
 
-        //this be mongoDB???
-        //public InfluxDbInstance InfluxDbInstance { get; set; }
+        //public MongoConnection MongoConnection { get; set; }
     }
 }

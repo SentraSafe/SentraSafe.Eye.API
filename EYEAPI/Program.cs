@@ -10,6 +10,8 @@ using EYEAPI.Models;
 using MQTTnet.Formatter;
 using MQTTnet.Protocol;
 using MQTTnet;
+using MongoDB.Driver;
+using Microsoft.Extensions.Azure;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 */
 builder.Services.AddOptions<AppSettings>().Bind(builder.Configuration);
+//builder.Services.AddSingleton<MongoClient>(s =>
+//{
+//   IOptions<AppSettings> options = s.GetRequiredService<IOptions<AppSettings>>();
+//    return new MongoClient(options.Value.MongoConnection.ConnectionString);
+//});
+
 builder.Services.AddSingleton<MqttClientFactory>();
 builder.Services.AddSingleton<IMqttClient>(serviceProvider =>
 {
