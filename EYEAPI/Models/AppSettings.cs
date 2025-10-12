@@ -4,6 +4,6 @@
     {
         public MqttBroker MqttBroker { get; set; }
 
-        //public MongoConnection MongoConnection { get; set; }
+        public MongoConnection MongoDbConnectionString { get; set; }
     }
 }
