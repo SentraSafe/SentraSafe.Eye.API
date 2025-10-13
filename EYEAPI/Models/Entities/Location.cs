@@ -1,4 +1,4 @@
-﻿namespace EYEAPI.Models
+﻿namespace EYEAPI.Models.Entities
 {
     public class Location
     {

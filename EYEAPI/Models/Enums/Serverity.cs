@@ -1,6 +1,6 @@
 ﻿namespace EYEAPI.Models.Enums
 {
-    public enum LogLevel
+    public enum Serverity
     {
         Information = 0,
         Warning = 1,
