@@ -5,12 +5,6 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EYEAPI", "EYEAPI\EYEAPI.csproj", "{AEA509CE-8EE6-45EB-A253-042984A006DF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{79E64E58-B8FF-4556-B259-CDA56D4CA5DA}"
-	ProjectSection(SolutionItems) = preProject
-		compose.docker = compose.docker
-		compose.yaml = compose.yaml
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
