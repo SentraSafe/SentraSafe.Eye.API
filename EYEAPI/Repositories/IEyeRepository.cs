@@ -12,5 +12,7 @@ namespace EYEAPI.Repositories
         Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId);
         Task<List<LocationDto>> GetAllLocationsAsync();
         Task<Location> AddLocationAsync(Location newLocation);
+        Task DeleteLocationByIdAsync(int locationId);
+        Task<LocationDto> UpdateLocationAsync(LocationDto locationDto);
     }
 }

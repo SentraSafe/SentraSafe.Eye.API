@@ -21,14 +21,48 @@ namespace EYEAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> PostNewLocationAsync(CreateLocationDto newLocation)
         {
-            return Ok(await locationService.AddLocationAsync(newLocation));
+            try
+            {
+                return Ok(await locationService.AddLocationAsync(newLocation));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateLocationAsync(LocationDto location)
+        {
+            try
+            {
+                return Ok(await locationService.UpdateLocationAsync(location));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteLocationByIdAsync(int locationId)
+        {
+            try
+            {
+                await locationService.DeleteLocationByIdAsync(locationId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

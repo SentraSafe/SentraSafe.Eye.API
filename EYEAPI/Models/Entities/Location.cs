@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<Sublocation> Sublocations { get; } = new List<Sublocation>();
+        public ICollection<Sublocation>? Sublocations { get; set; } = new List<Sublocation>();
     }
 }
