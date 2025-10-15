@@ -16,5 +16,8 @@ namespace EYEAPI.Services.LocationService
             Location newLocation = await eyeRepository.AddLocationAsync(location);
             return new LocationDto(newLocation);
         }
+
+        public async Task DeleteLocationByIdAsync(int locationId) => await eyeRepository.DeleteLocationByIdAsync(locationId);
+        public async Task<LocationDto> UpdateLocationAsync(LocationDto location) => await eyeRepository.UpdateLocationAsync(location);
     }
 }
