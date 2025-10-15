@@ -1,4 +1,5 @@
-﻿using EYEAPI.Models.Entities;
+﻿using EYEAPI.Models.Dtos.SublocationDtos;
+using EYEAPI.Models.Entities;
 
 namespace EYEAPI.Models.Dtos.LocationDtos
 {
@@ -6,13 +7,13 @@ namespace EYEAPI.Models.Dtos.LocationDtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Sublocation> Sublocations{ get; set; }
+        public List<SublocationDto>? Sublocations { get; set; }
 
         public LocationDto(Location location)
         {
             Id = location.Id;
             Name = location.Name;
-            Sublocations = location.Sublocations.ToList();
+            Sublocations = location.Sublocations?.Select(sublocation => new SublocationDto(sublocation)).ToList();
         }
     }
 }
