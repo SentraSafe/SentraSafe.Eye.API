@@ -1,0 +1,27 @@
+﻿using EYEAPI.Models.Dtos.MachineDtos;
+using EYEAPI.Models.Entities;
+using EYEAPI.Models.Enums;
+using EYEAPI.Repositories;
+using System.Runtime.CompilerServices;
+
+namespace EYEAPI.Services.MachineService
+{
+    public class MachineService(IEyeRepository eyeRepository) : IMachineService
+    {
+        public async Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams) => await eyeRepository.GetMachinesAsync(searchParams);
+
+        public async Task<MachineDto> AddMachineAsync(CreateMachineDto createMachine)
+        {
+            Sublocation sublocation = await eyeRepository.GetSublocationByIdAsync(createMachine.SublocationId);
+            Machine newMachine = new Machine()
+            {
+             Name= createMachine.Name,
+             SublocationId= sublocation.Id,
+             Sublocation = sublocation,
+             Type = createMachine.MachineType
+            };
+            newMachine = await eyeRepository.AddMachineAsync(newMachine);
+            return new MachineDto(newMachine);
+        }
+    }
+}

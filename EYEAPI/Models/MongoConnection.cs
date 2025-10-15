@@ -1,7 +1,8 @@
 ﻿namespace EYEAPI.Models
 {
-    public class MongoConnection
+    public class ConnectionStrings
     {
-        public string ConnectionString  { get; set; }
+        public string MongoDbConnectionString { get; set; }
+        public string Eye {  get; set; }
     }
 }

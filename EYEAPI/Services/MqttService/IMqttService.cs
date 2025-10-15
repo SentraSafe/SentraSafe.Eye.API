@@ -1,7 +1,7 @@
 ﻿using MQTTnet.Protocol;
 using MQTTnet;
 
-namespace EYEAPI.Services
+namespace EYEAPI.Services.MqttService
 {
     public interface IMqttService
     {

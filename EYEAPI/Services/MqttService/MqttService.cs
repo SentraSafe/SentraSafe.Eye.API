@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text;
 using EYEAPI.Models;
 
-namespace EYEAPI.Services
+namespace EYEAPI.Services.MqttService
 {
     public class MqttService(MqttClientFactory mqttClientFactory, IMqttClient mqttClient, MqttClientOptionsBuilder builder, IOptions<AppSettings> options) : IMqttService
     {

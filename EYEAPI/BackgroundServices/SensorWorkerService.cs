@@ -1,12 +1,12 @@
-﻿using EYEAPI.Services;
-using EYEAPI.Repositories;
-using EYEAPI.Models;
+﻿using EYEAPI.Repositories;
 using System.Diagnostics.Metrics;
 using System.Text.Json;
 using MQTTnet;
 using System.Text;
 using System.Diagnostics;
 using MongoDB.Driver;
+using EYEAPI.Models.Entities;
+using EYEAPI.Services.MqttService;
 
 namespace EYEAPI.BackgroundServices
 {
