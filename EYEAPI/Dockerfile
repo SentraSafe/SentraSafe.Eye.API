@@ -3,7 +3,7 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 8443
 #EXPOSE 8444
-
+ENV ASPNETCORE_URLS="http://+:8443"
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
