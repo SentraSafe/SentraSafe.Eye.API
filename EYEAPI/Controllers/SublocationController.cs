@@ -1,62 +1,59 @@
-﻿using EYEAPI.Models.Dtos.AlarmDtos;
-using EYEAPI.Models.Entities;
-using EYEAPI.Services.AlarmService;
+﻿using EYEAPI.Models.Dtos.LocationDtos;
+using EYEAPI.Services.LocationService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AlarmController(ILogService alarmService) : ControllerBase
+    public class SublocationController : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAlarmsAsync([FromQuery] AlarmSearchParamsDto searchParams)
+        public async Task<IActionResult> GetAllLocationsAsync()
         {
             try
             {
-                return Ok(await alarmService.GetAlarmsAsync(searchParams));
+                return Ok(await locationService.GetAllLocationsAsync());
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewAlarmAsync(CreateAlarmDto newAlarm)
+        public async Task<IActionResult> PostNewLocationAsync(CreateLocationDto newLocation)
         {
             try
             {
-                return Ok(await alarmService.AddAlarmAsync(newAlarm));
+                return Ok(await locationService.AddLocationAsync(newLocation));
             }
             catch (Exception ex)
             {
-
                 return BadRequest(ex.Message);
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutUpdateAlarmAsync(Alarm alarm)
+        public async Task<IActionResult> UpdateLocationAsync(LocationDto location)
         {
             try
             {
-                return Ok(await alarmService.UpdateAlarmAsync(alarm));
+                return Ok(await locationService.UpdateLocationAsync(location));
             }
             catch (Exception ex)
             {
-
                 return BadRequest(ex.Message);
             }
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteAlarmByIdAsync(int machinceId)
+        public async Task<IActionResult> DeleteLocationByIdAsync(int locationId)
         {
             try
             {
-                await alarmService.DeleteAlarmByIdAsync(machinceId);
+                await locationService.DeleteLocationByIdAsync(locationId);
                 return Ok();
             }
             catch (Exception ex)

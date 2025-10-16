@@ -10,7 +10,7 @@ namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LocationController(ILocationService locationService) : ControllerBase
+    public class LocationController(ISublocationService locationService) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAllLocationsAsync()

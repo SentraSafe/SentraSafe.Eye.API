@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
@@ -16,8 +15,10 @@ using Microsoft.IdentityModel.Tokens;
 using EYEAPI.Services.MqttService;
 using EYEAPI.Services.MachineService;
 using EYEAPI.Services.LocationService;
-using EYEAPI.Controllers;
 using EYEAPI.Services.AlarmService;
+using EYEAPI.Services.SublocationService;
+using EYEAPI.Services.LogService;
+using EYEAPI.Controllers;
 using EYEAPI.Hubs;
 
 
@@ -84,9 +85,13 @@ builder.Services.AddSingleton<IMqttService, MqttService>();
 builder.Services.AddScoped<IMachineService, MachineService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAlarmService, AlarmService>();
+builder.Services.AddScoped<ISublocationService, SublocationService>();
+builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IEyeRepository, EyeRepository>();
 builder.Services.AddHostedService<SensorWorkerService>();
 builder.Services.AddHostedService<WebSocketWorkerService>();
+
+
 
 
 var app = builder.Build();
