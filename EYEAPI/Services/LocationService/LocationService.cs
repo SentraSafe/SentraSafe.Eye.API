@@ -11,10 +11,7 @@ namespace EYEAPI.Services.LocationService
 
         public async Task<LocationDto> AddLocationAsync(CreateLocationDto createLocation)
         {
-            Location location = new Location() {
-                Name = createLocation.Name
-            };
-            Location newLocation = await eyeRepository.AddLocationAsync(location);
+            Location newLocation = await eyeRepository.AddLocationAsync(mapper.Map<Location>(createLocation));
             return mapper.Map<LocationDto>(newLocation);
         }
 

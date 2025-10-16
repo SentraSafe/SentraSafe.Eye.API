@@ -14,14 +14,7 @@ namespace EYEAPI.Services.MachineService
         public async Task<MachineDto> AddMachineAsync(CreateMachineDto createMachine)
         {
             Sublocation sublocation = await eyeRepository.GetSublocationByIdAsync(createMachine.SublocationId);
-            Machine newMachine = new Machine()
-            {
-             Name= createMachine.Name,
-             SublocationId= sublocation.Id,
-             Sublocation = sublocation,
-             Type = createMachine.MachineType
-            };
-            newMachine = await eyeRepository.AddMachineAsync(newMachine);
+            Machine newMachine = await eyeRepository.AddMachineAsync(mapper.Map<Machine>(createMachine));
             return new MachineDto(newMachine);
         }
 
@@ -29,6 +22,7 @@ namespace EYEAPI.Services.MachineService
         {
             Machine editMachine = mapper.Map<Machine>(updateMachine);
             return mapper.Map<MachineDto>(await eyeRepository.UpdateMachineAsync(editMachine));
-        } 
+        }
+        public async Task DeleteMachineByIdAsync(int machineId) => await eyeRepository.DeleteMachineByIdAsync(machineId);
     }
 }

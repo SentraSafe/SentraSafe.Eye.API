@@ -9,13 +9,20 @@ namespace EYEAPI.Repositories
     {
         Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams);
         Task<Machine> AddMachineAsync(Machine newMachine);
+        Task<MachineDto> UpdateMachineAsync(Machine updateMachine);
+        Task DeleteMachineByIdAsync(int machineId);
+
         Task<Sublocation> GetSublocationByIdAsync(int id);
         Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId);
+
         Task<List<Location>> GetAllLocationsAsync();
         Task<Location> AddLocationAsync(Location newLocation);
-        Task DeleteLocationByIdAsync(int locationId);
         Task<Location> UpdateLocationAsync(LocationDto locationDto);
-        Task<MachineDto> UpdateMachineAsync(Machine updateMachine);
+        Task DeleteLocationByIdAsync(int locationId);
+
         Task<List<Alarm>> GetAlarmsAsync(AlarmSearchParamsDto searchParams);
+        Task<Alarm> AddAlarmAsync(Alarm newAlarm);
+        Task<Alarm> UpdateAlarmAsync(Alarm updateAlarm);
+        Task DeleteAlarmByIdAsync(int alarmId);
     }
 }

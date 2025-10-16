@@ -2,6 +2,7 @@
 using EYEAPI.Models.Entities;
 using EYEAPI.Models.Enums;
 using EYEAPI.Repositories;
+using EYEAPI.Services.LocationService;
 using EYEAPI.Services.MachineService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,20 @@ namespace EYEAPI.Controllers
             catch (Exception ex)
             {
 
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteMachineByIdAsync(int machinceId)
+        {
+            try
+            {
+                await machineService.DeleteMachineByIdAsync(machinceId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(ex.Message);
             }
         }

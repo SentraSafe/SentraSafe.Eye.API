@@ -8,5 +8,6 @@ namespace EYEAPI.Services.MachineService
         Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams);
         Task<MachineDto> AddMachineAsync(CreateMachineDto createMachine);
         Task<MachineDto> UpdateMachineAsync(UpdateMachineDto updateMachine);
+        Task DeleteMachineByIdAsync(int machineId);
     }
 }

@@ -1,8 +1,12 @@
-﻿using EYEAPI.Models.Enums;
+﻿using AutoMapper;
+using EYEAPI.Models.Entities;
+using EYEAPI.Models.Enums;
 
 
 namespace EYEAPI.Models.Dtos.MachineDtos
 {
+    [AutoMap(typeof(Machine))]
+
     public class MachineSearchParamsDto
     {
         public string? Name { get; set; }

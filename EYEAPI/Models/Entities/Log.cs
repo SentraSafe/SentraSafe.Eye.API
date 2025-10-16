@@ -10,6 +10,8 @@ namespace EYEAPI.Models.Entities
         public DateTime TimeStamp { get; set; } = DateTime.Now;
         public Severity Severity { get; set; }
         public int MachineId { get; set; }
+        public Machine Machine { get; set; }
         public int AlarmId { get; set; }
+        public Alarm Alarm { get; set; }
     }
 }
