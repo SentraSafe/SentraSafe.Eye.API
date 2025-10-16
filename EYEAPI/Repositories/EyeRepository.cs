@@ -1,4 +1,5 @@
-﻿using EYEAPI.Contexts;
+﻿using AutoMapper;
+using EYEAPI.Contexts;
 using EYEAPI.Exstensions;
 using EYEAPI.Models.Dtos.AlarmDtos;
 using EYEAPI.Models.Dtos.LocationDtos;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EYEAPI.Repositories
 {
-    public class EyeRepository(EyeContext eyeContext) : IEyeRepository
+    public class EyeRepository(EyeContext eyeContext, IMapper mapper) : IEyeRepository
     {
         #region Machine
         public async Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams) =>
@@ -22,7 +23,11 @@ namespace EYEAPI.Repositories
             .Select(machine => new MachineDto(machine))
             .ToListAsync();
 
-        public async Task<Machine> AddMachineAsync(Machine newMachine) => (await eyeContext.Machines.AddAsync(newMachine)).Entity;
+        public async Task<Machine> AddMachineAsync(Machine newMachine) {
+            await eyeContext.Machines.AddAsync(newMachine);
+            await eyeContext.SaveChangesAsync();
+            return newMachine;
+        }
         #endregion
 
         #region Sublocation
@@ -36,13 +41,11 @@ namespace EYEAPI.Repositories
         #endregion
 
         #region Location
-        public async Task<List<LocationDto>> GetAllLocationsAsync() => await eyeContext.Locations
+        public async Task<List<Location>> GetAllLocationsAsync() => await eyeContext.Locations
             .Include(location => location.Sublocations)
-            .Select(location => new LocationDto(location))
             .ToListAsync();
-        private async Task<LocationDto> GetLocationById(int locationId) => await eyeContext.Locations
+        private async Task<Location?> GetLocationById(int locationId) => await eyeContext.Locations
             .Include(location => location.Sublocations)
-            .Select(location => new LocationDto(location))
             .FirstOrDefaultAsync();
         public async Task<Location> AddLocationAsync(Location newLocation) => (await eyeContext.Locations.AddAsync(newLocation)).Entity;
 
@@ -54,7 +57,7 @@ namespace EYEAPI.Repositories
             await eyeContext.SaveChangesAsync();
         }
 
-        public async Task<LocationDto> UpdateLocationAsync(LocationDto locationDto)
+        public async Task<Location> UpdateLocationAsync(LocationDto locationDto)
         {
             var location = new Location
             {

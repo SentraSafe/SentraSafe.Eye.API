@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -49,6 +50,8 @@ builder.Services.AddSingleton<MongoClient>(s =>
     IOptions<AppSettings> options = s.GetRequiredService<IOptions<AppSettings>>();
     return new MongoClient(options.Value.ConnectionStrings.MongoDbConnectionString);
 });
+
+builder.Services.AddAutoMapper(expression => expression.AddMaps(typeof(Program).Assembly));
 
 builder.Services.AddSingleton<MqttClientFactory>();
 builder.Services.AddSingleton<IMqttClient>(serviceProvider =>

@@ -1,4 +1,7 @@
-﻿namespace EYEAPI.Models.Entities
+﻿using AutoMapper;
+using EYEAPI.Models.Dtos.LocationDtos;
+
+namespace EYEAPI.Models.Entities
 {
     public class Location
     {
