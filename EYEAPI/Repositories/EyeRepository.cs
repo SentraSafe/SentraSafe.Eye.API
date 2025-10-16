@@ -22,7 +22,11 @@ namespace EYEAPI.Repositories
             .Select(machine => new MachineDto(machine))
             .ToListAsync();
 
-        public async Task<Machine> AddMachineAsync(Machine newMachine) => (await eyeContext.Machines.AddAsync(newMachine)).Entity;
+        public async Task<Machine> AddMachineAsync(Machine newMachine) {
+            await eyeContext.Machines.AddAsync(newMachine);
+            await eyeContext.SaveChangesAsync();
+            return newMachine;
+        }
         #endregion
 
         #region Sublocation
