@@ -1,12 +1,13 @@
-﻿using EYEAPI.Models.Dtos.LocationDtos;
+﻿using AutoMapper;
+using EYEAPI.Models.Dtos.LocationDtos;
 using EYEAPI.Models.Entities;
 using EYEAPI.Repositories;
 
 namespace EYEAPI.Services.LocationService
 {
-    public class LocationService(IEyeRepository eyeRepository) : ILocationService
+    public class LocationService(IEyeRepository eyeRepository, IMapper mapper) : ILocationService
     {
-        public async Task<List<LocationDto>> GetAllLocationsAsync() => await eyeRepository.GetAllLocationsAsync();
+        public async Task<List<LocationDto>> GetAllLocationsAsync() => mapper.Map<List<LocationDto>>(await eyeRepository.GetAllLocationsAsync());
 
         public async Task<LocationDto> AddLocationAsync(CreateLocationDto createLocation)
         {
@@ -14,10 +15,10 @@ namespace EYEAPI.Services.LocationService
                 Name = createLocation.Name
             };
             Location newLocation = await eyeRepository.AddLocationAsync(location);
-            return new LocationDto(newLocation);
+            return mapper.Map<LocationDto>(newLocation);
         }
 
         public async Task DeleteLocationByIdAsync(int locationId) => await eyeRepository.DeleteLocationByIdAsync(locationId);
-        public async Task<LocationDto> UpdateLocationAsync(LocationDto location) => await eyeRepository.UpdateLocationAsync(location);
+        public async Task<LocationDto> UpdateLocationAsync(LocationDto location) => mapper.Map<LocationDto>(await eyeRepository.UpdateLocationAsync(location));
     }
 }
