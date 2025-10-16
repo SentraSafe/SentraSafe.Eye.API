@@ -18,6 +18,7 @@ using EYEAPI.Services.MachineService;
 using EYEAPI.Services.LocationService;
 using EYEAPI.Controllers;
 using EYEAPI.Services.AlarmService;
+using EYEAPI.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,7 +41,8 @@ builder.Services
         options.Authority = "https://login.microsoftonline.com/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/v2.0";
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            ValidIssuers = ["https://sts.windows.net/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/", "https://login.microsoftonline.com/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/v2.0"]
+            ValidIssuers = ["https://sts.windows.net/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/",
+                "https://login.microsoftonline.com/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/v2.0"]
         };
         options.Audience = "api://32ca31d5-86a3-4177-a755-80c827cc93f0";
     });
@@ -54,6 +56,7 @@ builder.Services.AddSingleton<MongoClient>(s =>
 });
 
 builder.Services.AddAutoMapper(expression => expression.AddMaps(typeof(Program).Assembly));
+builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<MqttClientFactory>();
 builder.Services.AddSingleton<IMqttClient>(serviceProvider =>
@@ -83,6 +86,7 @@ builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAlarmService, AlarmService>();
 builder.Services.AddScoped<IEyeRepository, EyeRepository>();
 builder.Services.AddHostedService<SensorWorkerService>();
+builder.Services.AddHostedService<WebSocketWorkerService>();
 
 
 var app = builder.Build();
@@ -101,8 +105,7 @@ if (app.Environment.IsDevelopment())
 };
 
 app.UseHttpsRedirection();
-
-// app.UseAuthorization();
+app.MapHub<MqttHub>("/mqttHub").RequireCors("AllowClient");
 app.MapControllers();
 
 app.UseCors(policyBuilder =>
