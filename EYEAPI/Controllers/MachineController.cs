@@ -6,6 +6,7 @@ using EYEAPI.Services.MachineService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
+using SharpCompress.Archives;
 
 namespace EYEAPI.Controllers
 {
@@ -28,11 +29,25 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewMachineAsync([FromQuery] CreateMachineDto newMachine)
+        public async Task<IActionResult> PostNewMachineAsync(CreateMachineDto newMachine)
         {
             try
             {
                 return Ok(await machineService.AddMachineAsync(newMachine));
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutUpdateMachineAsync([FromQuery] Machine machine)
+        {
+            try
+            {
+                return Ok();
             }
             catch (Exception ex)
             {

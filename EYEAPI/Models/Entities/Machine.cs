@@ -9,5 +9,6 @@ namespace EYEAPI.Models.Entities
         public MachineType Type { get; set; }
         public int SublocationId { get; set; }
         public Sublocation Sublocation { get; set; }
+        public List<Alarm>? Alarms { get; set; }
     }
 }

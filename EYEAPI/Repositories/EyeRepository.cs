@@ -1,5 +1,6 @@
 ﻿using EYEAPI.Contexts;
 using EYEAPI.Exstensions;
+using EYEAPI.Models.Dtos.AlarmDtos;
 using EYEAPI.Models.Dtos.LocationDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Dtos.SublocationDtos;
@@ -68,6 +69,14 @@ namespace EYEAPI.Repositories
         #endregion
 
         #region Alarm
+        public async Task<List<Alarm>> GetAlarmsAsync(AlarmSearchParamsDto searchParams) =>
+            await eyeContext.Alarms.WhereIfNotNull(searchParams.Id, alarm => alarm.Id == searchParams.Id)
+            .WhereIfNotNull(searchParams.Title, alarm => alarm.Title == searchParams.Title)
+            .WhereIfNotNull(searchParams.MachineId, alarm => alarm.MachineId == searchParams.MachineId)
+            .WhereIfNotNull(searchParams.MachineType, alarm => alarm.MachineType == searchParams.MachineType)
+            .WhereIfNotNull(searchParams.Severity, alarm => alarm.Severity == searchParams.Severity)
+            .Include(alarm => alarm.Machine)
+            .ToListAsync();
 
         #endregion
     }
