@@ -9,14 +9,16 @@ using EYEAPI.Models.Entities;
 using EYEAPI.Services.MqttService;
 using EYEAPI.Models;
 using MQTTnet.Protocol;
+using Microsoft.Extensions.Options;
 
 namespace EYEAPI.BackgroundServices
 {
-    public class SensorWorkerService(MqttClientOptionsBuilder mqttClientOptions,ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient,AppSettings appSettings) : BackgroundService
+    public class SensorWorkerService(MqttClientOptionsBuilder mqttClientOptions,ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient,IOptions<AppSettings> appSettings) : BackgroundService
     {
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            var x = mqttClientOptions.WithCredentials(appSettings.MqttBroker.Users[0], appSettings.MqttBroker.Secrets[0]);
+            var brokerSettings = appSettings.Value.MqttBroker;
+            var x = mqttClientOptions.WithCredentials(brokerSettings.Users[0], brokerSettings.Secrets[0]);
             
             await mqttService.ConnectAsync(mqttClientOptions.Build());
             await mqttService.SubscribeAsync("measurement/#",MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);

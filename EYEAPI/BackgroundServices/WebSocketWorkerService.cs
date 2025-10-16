@@ -8,14 +8,16 @@ using System.Text.Json;
 using EYEAPI.Models.Entities;
 using EYEAPI.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
 
 namespace EYEAPI.BackgroundServices
 {
-    public class WebSocketWorkerService(IHubContext<MqttHub> hubContext, MqttClientOptionsBuilder mqttClientOptions, ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient, AppSettings appSettings) : BackgroundService
+    public class WebSocketWorkerService(IHubContext<MqttHub> hubContext, MqttClientOptionsBuilder mqttClientOptions, ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient, IOptions<AppSettings> appSettings) : BackgroundService
     {
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            var x = mqttClientOptions.WithCredentials(appSettings.MqttBroker.Users[1], appSettings.MqttBroker.Secrets[1]);
+            var brokerSettings = appSettings.Value.MqttBroker;
+            var x = mqttClientOptions.WithCredentials(brokerSettings.Users[1], brokerSettings.Secrets[1]);
 
             await mqttService.ConnectAsync(mqttClientOptions.Build());
             await mqttService.SubscribeAsync("measurement/#", MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);
