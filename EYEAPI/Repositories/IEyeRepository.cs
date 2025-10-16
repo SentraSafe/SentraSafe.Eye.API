@@ -1,4 +1,5 @@
-﻿using EYEAPI.Models.Dtos.LocationDtos;
+﻿using EYEAPI.Models.Dtos.AlarmDtos;
+using EYEAPI.Models.Dtos.LocationDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Entities;
 
@@ -14,5 +15,7 @@ namespace EYEAPI.Repositories
         Task<Location> AddLocationAsync(Location newLocation);
         Task DeleteLocationByIdAsync(int locationId);
         Task<Location> UpdateLocationAsync(LocationDto locationDto);
+        Task<MachineDto> UpdateMachineAsync(Machine updateMachine);
+        Task<List<Alarm>> GetAlarmsAsync(AlarmSearchParamsDto searchParams);
     }
 }

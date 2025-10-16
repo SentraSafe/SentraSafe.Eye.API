@@ -3,6 +3,7 @@
     public enum MachineType
     {
         Server = 0,
-        Other = 1
+        Sensor = 1,
+        Other = 2
     }
 }

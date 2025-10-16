@@ -7,15 +7,19 @@ using System.Diagnostics;
 using MongoDB.Driver;
 using EYEAPI.Models.Entities;
 using EYEAPI.Services.MqttService;
+using EYEAPI.Models;
+using MQTTnet.Protocol;
 
 namespace EYEAPI.BackgroundServices
 {
-    public class SensorWorkerService(ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient) : BackgroundService
+    public class SensorWorkerService(MqttClientOptionsBuilder mqttClientOptions,ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient,AppSettings appSettings) : BackgroundService
     {
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
-            await mqttService.Connect();
-            await mqttService.Subscribe("measurement/#", OnMessageReceived);
+            var x = mqttClientOptions.WithCredentials(appSettings.MqttBroker.Users[0], appSettings.MqttBroker.Secrets[0]);
+            
+            await mqttService.ConnectAsync(mqttClientOptions.Build());
+            await mqttService.SubscribeAsync("measurement/#",MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);
 #if DEBUG
             Console.WriteLine("Background service started");
 #endif
@@ -23,9 +27,9 @@ namespace EYEAPI.BackgroundServices
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (!mqttService.ClientIsConnected)
+            if (!mqttService.IsConnected)
             {
-                await mqttService.Reconnect();
+                await mqttService.ReconnectAsync();
             }        
         }
                                              

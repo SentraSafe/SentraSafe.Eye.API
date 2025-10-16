@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,6 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 using EYEAPI.Services.MqttService;
 using EYEAPI.Services.MachineService;
 using EYEAPI.Services.LocationService;
+using EYEAPI.Controllers;
+using EYEAPI.Services.AlarmService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,7 +67,6 @@ builder.Services.AddSingleton<MqttClientOptionsBuilder>(serviceProvider =>
     IOptions<AppSettings> options = serviceProvider.GetRequiredService<IOptions<AppSettings>>();
     return new MqttClientOptionsBuilder()
         .WithTcpServer(options.Value.MqttBroker.Host)
-        .WithCredentials(options.Value.MqttBroker.Username, options.Value.MqttBroker.Password)
         .WithTlsOptions(x => x.UseTls())
         .WithProtocolVersion(MqttProtocolVersion.V311)
         .WithWillTopic("health")
@@ -79,6 +80,7 @@ builder.Services.AddDbContext<EyeContext>(x => x.UseSqlServer("Name=Eye"));
 builder.Services.AddSingleton<IMqttService, MqttService>();
 builder.Services.AddScoped<IMachineService, MachineService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IAlarmService, AlarmService>();
 builder.Services.AddScoped<IEyeRepository, EyeRepository>();
 builder.Services.AddHostedService<SensorWorkerService>();
 
@@ -91,6 +93,12 @@ if (app.Environment.IsDevelopment())
 }
     app.UseSwagger();
     app.UseSwaggerUI();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+};
 
 app.UseHttpsRedirection();
 

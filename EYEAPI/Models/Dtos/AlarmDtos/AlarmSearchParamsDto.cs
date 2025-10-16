@@ -4,10 +4,10 @@ namespace EYEAPI.Models.Dtos.AlarmDtos
 {
     public class AlarmSearchParamsDto
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public int MachineId { get; set; }
-        public MachineType MachineType { get; set; }
-        public Serverity Severity { get; set; }
+        public int? Id { get; set; }
+        public string? Title { get; set; }
+        public int? MachineId { get; set; }
+        public MachineType? MachineType { get; set; }
+        public Severity? Severity { get; set; }
     }
 }

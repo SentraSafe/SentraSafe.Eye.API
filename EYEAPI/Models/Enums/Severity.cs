@@ -1,6 +1,6 @@
 ﻿namespace EYEAPI.Models.Enums
 {
-    public enum Serverity
+    public enum Severity
     {
         Information = 0,
         Warning = 1,

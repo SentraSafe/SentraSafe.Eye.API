@@ -1,5 +1,8 @@
 ﻿using EYEAPI.Models.Enums;
-using Serverity = EYEAPI.Models.Enums.Serverity;
+using EYEAPI.Contexts;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.EntityFrameworkCore;
 
 namespace EYEAPI.Models.Entities
 {
@@ -11,7 +14,7 @@ namespace EYEAPI.Models.Entities
         public int MachineId { get; set; }
         public Machine Machine { get; set; }
         public MachineType MachineType { get; set; }
-        public Serverity Severity { get; set; }
+        public Severity Severity { get; set; }
         public int MaximumValue { get; set; }
     }
 }

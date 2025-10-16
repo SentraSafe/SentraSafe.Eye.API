@@ -42,12 +42,12 @@ namespace EYEAPI.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutUpdateMachineAsync([FromQuery] Machine machine)
+        [HttpPut]                       
+        public async Task<IActionResult> PutUpdateMachineAsync(UpdateMachineDto machine)
         {
             try
             {
-                return Ok();
+                return Ok(await machineService.UpdateMachineAsync(machine));
             }
             catch (Exception ex)
             {

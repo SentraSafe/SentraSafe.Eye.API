@@ -1,4 +1,5 @@
-﻿using EYEAPI.Models.Dtos.MachineDtos;
+﻿using AutoMapper;
+using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Entities;
 using EYEAPI.Models.Enums;
 using EYEAPI.Repositories;
@@ -6,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace EYEAPI.Services.MachineService
 {
-    public class MachineService(IEyeRepository eyeRepository) : IMachineService
+    public class MachineService(IEyeRepository eyeRepository, IMapper mapper) : IMachineService
     {
         public async Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams) => await eyeRepository.GetMachinesAsync(searchParams);
 
@@ -23,5 +24,11 @@ namespace EYEAPI.Services.MachineService
             newMachine = await eyeRepository.AddMachineAsync(newMachine);
             return new MachineDto(newMachine);
         }
+
+        public async Task<MachineDto> UpdateMachineAsync(UpdateMachineDto updateMachine)
+        {
+            Machine editMachine = mapper.Map<Machine>(updateMachine);
+            return mapper.Map<MachineDto>(await eyeRepository.UpdateMachineAsync(editMachine));
+        } 
     }
 }

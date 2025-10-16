@@ -1,54 +1,67 @@
-﻿using Microsoft.Extensions.Options;
-using MQTTnet;
+﻿using EYEAPI.Services.MqttService;
 using MQTTnet.Protocol;
-using System.Text.Json;
+using MQTTnet;
 using System.Text;
-using EYEAPI.Models;
+using System.Text.Json;
 
-namespace EYEAPI.Services.MqttService
+public class MqttService(MqttClientFactory factory) : IMqttService
 {
-    public class MqttService(MqttClientFactory mqttClientFactory, IMqttClient mqttClient, MqttClientOptionsBuilder builder, IOptions<AppSettings> options) : IMqttService
+    private readonly IMqttClient _client = factory.CreateMqttClient();
+
+
+    public async Task ConnectAsync(MqttClientOptions options)
     {
-        private readonly IOptions<AppSettings> _options = options;
-
-        public bool ClientIsConnected => mqttClient.IsConnected;
-
-        public async Task<MqttClientConnectResult> Connect(MqttClientOptionsBuilder? optionsBuilder = null, CancellationToken? cancellationToken = null)
+        if (!_client.IsConnected)
         {
-            optionsBuilder ??= builder;
-            return await mqttClient.ConnectAsync(optionsBuilder.Build(), cancellationToken ?? CancellationToken.None);
-        }
-
-        public async Task Reconnect(CancellationToken? cancellationToken = null)
-        {
-            await mqttClient.ReconnectAsync(cancellationToken ?? CancellationToken.None);
-        }
-
-
-        public async Task Subscribe(string topic, Func<MqttApplicationMessageReceivedEventArgs, Task> onMessageReceivedEvent, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtLeastOnce, CancellationToken? cancellationToken = null)
-        {
-            MqttClientSubscribeOptions mqttClientSubscribeOptions = mqttClientFactory.CreateSubscribeOptionsBuilder()
-                .WithTopicFilter(topic, qos)
-                .Build();
-
-            mqttClient.ApplicationMessageReceivedAsync += onMessageReceivedEvent;
-
-            if (!ClientIsConnected)
-            {
-                await Reconnect();
-            }
-
-            await mqttClient.SubscribeAsync(mqttClientSubscribeOptions, cancellationToken ?? CancellationToken.None);
-        }
-
-        public MqttClientOptionsBuilder GetOptionsBuilder()
-        {
-            return builder;
-        }
-
-        public IMqttClient GetClient()
-        {
-            return mqttClient;
+            await _client.ConnectAsync(options);
         }
     }
+
+    public async Task ReconnectAsync()
+    {
+        await _client.ReconnectAsync();
+    }
+
+    public async Task SubscribeAsync(string topic, MqttQualityOfServiceLevel qos, Func<MqttApplicationMessageReceivedEventArgs, Task> callback)
+    {
+        MqttClientSubscribeOptionsBuilder subscribeOptionsBuilder = factory.CreateSubscribeOptionsBuilder();
+        MqttClientSubscribeOptions subscribeOptions = subscribeOptionsBuilder.WithTopicFilter(topic, qos).Build();
+        _client.ApplicationMessageReceivedAsync += callback;
+        await _client.SubscribeAsync(subscribeOptions);
+    }
+
+    public async Task UnsubscribeAsync(string topic)
+    {
+        MqttClientUnsubscribeOptionsBuilder unsubscribeOptionsBuilder = factory.CreateUnsubscribeOptionsBuilder();
+        MqttClientUnsubscribeOptions unsubscribeOptions = unsubscribeOptionsBuilder.WithTopicFilter(topic).Build();
+        await _client.UnsubscribeAsync(unsubscribeOptions);
+    }
+
+    public async Task PublishJsonAsync(string topic, dynamic payload, MqttQualityOfServiceLevel qos, bool retain)
+    {
+        byte[] serializedMessage = JsonSerializer.SerializeToUtf8Bytes(payload);
+        MqttApplicationMessage mqttMessage = factory.CreateApplicationMessageBuilder()
+                                                    .WithTopic(topic)
+                                                    .WithContentType("application/json")
+                                                    .WithPayload(serializedMessage)
+                                                    .WithQualityOfServiceLevel(qos)
+                                                    .WithRetainFlag(retain)
+                                                    .Build();
+        await _client.PublishAsync(mqttMessage);
+    }
+
+    public async Task PublishAsync(string topic, dynamic payload, MqttQualityOfServiceLevel qos, bool retain)
+    {
+        byte[] serializedMessage = Encoding.Default.GetBytes(payload.ToString());
+        MqttApplicationMessage mqttMessage = factory.CreateApplicationMessageBuilder()
+            .WithTopic(topic)
+            .WithContentType("text/plain")
+            .WithPayload(serializedMessage)
+            .WithQualityOfServiceLevel(qos)
+            .WithRetainFlag(retain)
+            .Build();
+        await _client.PublishAsync(mqttMessage);
+    }
+
+    public bool IsConnected => _client.IsConnected;
 }

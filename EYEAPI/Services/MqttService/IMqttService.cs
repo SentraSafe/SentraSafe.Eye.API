@@ -5,11 +5,13 @@ namespace EYEAPI.Services.MqttService
 {
     public interface IMqttService
     {
-        Task<MqttClientConnectResult> Connect(MqttClientOptionsBuilder? optionsBuilder = null, CancellationToken? cancellationToken = null);
-        Task Reconnect(CancellationToken? cancellationToken = null);
-        Task Subscribe(string topic, Func<MqttApplicationMessageReceivedEventArgs, Task> onMessageReceivedEvent, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtLeastOnce, CancellationToken? cancellationToken = null);
-        MqttClientOptionsBuilder GetOptionsBuilder();
-        IMqttClient GetClient();
-        bool ClientIsConnected { get; }
+        bool IsConnected { get; }
+
+        Task ConnectAsync(MqttClientOptions options);
+        Task PublishAsync(string topic, dynamic payload, MqttQualityOfServiceLevel qos, bool retain);
+        Task PublishJsonAsync(string topic, dynamic payload, MqttQualityOfServiceLevel qos, bool retain);
+        Task ReconnectAsync();
+        Task SubscribeAsync(string topic, MqttQualityOfServiceLevel qos, Func<MqttApplicationMessageReceivedEventArgs, Task> callback);
+        Task UnsubscribeAsync(string topic);
     }
 }

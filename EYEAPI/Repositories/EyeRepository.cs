@@ -15,19 +15,31 @@ namespace EYEAPI.Repositories
     {
         #region Machine
         public async Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams) =>
-            await eyeContext.Machines.WhereIfNotNull(searchParams.Name, machine => machine.Name == searchParams.Name)
+            await eyeContext.Machines.WhereIfNotNull(searchParams.Name, machine => machine.Name.Contains(searchParams.Name))
             .WhereIfNotNull(searchParams.LocationId, machine => machine.Sublocation.Location.Id == searchParams.LocationId)
             .WhereIfNotNull(searchParams.SublocationId, machine => machine.Sublocation.Id == searchParams.SublocationId)
             .WhereIfNotNull(searchParams.MachineType, machine => machine.Type == searchParams.MachineType)
             .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
             .Select(machine => new MachineDto(machine))
             .ToListAsync();
+        public async Task<MachineDto> GetMachinesByIdAsync(int machineId) =>
+            await eyeContext.Machines.WhereIfNotNull(machineId, machine => machine.Id == machineId)
+            .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
+            .Select(machine => new MachineDto(machine))
+            .FirstOrDefaultAsync();
 
         public async Task<Machine> AddMachineAsync(Machine newMachine) 
         {
             await eyeContext.Machines.AddAsync(newMachine);
             await eyeContext.SaveChangesAsync();
             return newMachine;
+        }
+        public async Task<MachineDto> UpdateMachineAsync(Machine updateMachine)
+        {
+
+            eyeContext.Machines.Update(updateMachine);
+            await eyeContext.SaveChangesAsync();
+            return await GetMachinesByIdAsync(updateMachine.Id);
         }
         #endregion
 
@@ -45,7 +57,7 @@ namespace EYEAPI.Repositories
         public async Task<List<Location>> GetAllLocationsAsync() => await eyeContext.Locations
             .Include(location => location.Sublocations)
             .ToListAsync();
-        private async Task<Location?> GetLocationById(int locationId) => await eyeContext.Locations
+        private async Task<Location?> GetLocationByIdAsync(int locationId) => await eyeContext.Locations
             .Include(location => location.Sublocations)
             .FirstOrDefaultAsync();
         public async Task<Location> AddLocationAsync(Location newLocation) => (await eyeContext.Locations.AddAsync(newLocation)).Entity;
@@ -68,7 +80,7 @@ namespace EYEAPI.Repositories
             };
             eyeContext.Locations.Update(location);
             await eyeContext.SaveChangesAsync();
-            return await GetLocationById(locationDto.Id);
+            return await GetLocationByIdAsync(locationDto.Id);
         }
         #endregion
 
