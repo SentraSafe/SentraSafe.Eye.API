@@ -28,7 +28,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewMachineAsync([FromQuery] CreateMachineDto newMachine)
+        public async Task<IActionResult> PostNewMachineAsync(CreateMachineDto newMachine)
         {
             try
             {
