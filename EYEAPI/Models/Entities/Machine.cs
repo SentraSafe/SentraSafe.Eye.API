@@ -1,7 +1,10 @@
-﻿using EYEAPI.Models.Enums;
+﻿using AutoMapper;
+using EYEAPI.Models.Dtos.MachineDtos;
+using EYEAPI.Models.Enums;
 
 namespace EYEAPI.Models.Entities
 {
+    [AutoMap(typeof(CreateMachineDto))]
     public class Machine
     {
         public int Id { get; set; }

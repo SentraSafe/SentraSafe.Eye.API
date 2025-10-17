@@ -13,8 +13,12 @@ namespace EYEAPI.Services.MachineService
 
         public async Task<MachineDto> AddMachineAsync(CreateMachineDto createMachine)
         {
-            Sublocation sublocation = await eyeRepository.GetSublocationByIdAsync(createMachine.SublocationId);
-            Machine newMachine = await eyeRepository.AddMachineAsync(mapper.Map<Machine>(createMachine));
+            // Sublocation sublocation = await eyeRepository.GetSublocationByIdAsync(createMachine.SublocationId);
+            Machine newMachine = mapper.Map<Machine>(createMachine);
+
+            // newMachine.Sublocation = sublocation;
+
+            newMachine = await eyeRepository.AddMachineAsync(newMachine);
             return new MachineDto(newMachine);
         }
 
