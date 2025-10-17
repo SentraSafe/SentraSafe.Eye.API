@@ -28,11 +28,11 @@ namespace EYEAPI.Hubs
 
             var pipeline = new[]
             {
-                new BsonDocument("$match", new BsonDocument(nameof(Measurement.MachineId), int.Parse(group))),
-                new BsonDocument("$sort", new BsonDocument(nameof(Measurement.ReadingTime), -1)),
+                new BsonDocument("$match", new BsonDocument(nameof(Measurement.MachineId).Camelize(), int.Parse(group))),
+                new BsonDocument("$sort", new BsonDocument(nameof(Measurement.ReadingTime).Camelize(), -1)),
                 new BsonDocument("$group", new BsonDocument
                 {
-                    { "_id", $"${nameof(Measurement.MeasurementType)}" },
+                    { "_id", $"${nameof(Measurement.MeasurementType).Camelize()}" },
                     { "latestDocument", new BsonDocument("$first", "$$ROOT") }
                 }),
                 new BsonDocument("$replaceRoot", new BsonDocument("newRoot", "$latestDocument")),
