@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace EYEAPI.Hubs
 {
-    public class MqttHub(MongoClient mongoClient) : Hub
+    public class MqttHub(MongoClient mongoClient, ILogger<MqttHub> logger) : Hub
     {
         public async Task SendMessage(string payload)
         {
@@ -21,12 +21,15 @@ namespace EYEAPI.Hubs
         public async Task<List<Measurement>> Subscribe(string group)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, group);
-            var filterDefinition = Builders<Measurement>.Filter.Where(machineId => machineId.MachineId == int.Parse(group));
+            FilterDefinition<Measurement>? filterDefinition = Builders<Measurement>.Filter.Where(machineId => machineId.MachineId == int.Parse(group));
 
-            var database = mongoClient.GetDatabase("SensorData");
-            var collection = database.GetCollection<BsonDocument>("Sensor");
+            logger.LogInformation("Subscribed to: {group}", group);
 
-            var pipeline = new[]
+
+            IMongoDatabase? database = mongoClient.GetDatabase("SensorData");
+            IMongoCollection<BsonDocument>? collection = database.GetCollection<BsonDocument>("Sensor");
+
+            BsonDocument[] pipeline = new[]
             {
                 new BsonDocument("$match", new BsonDocument(nameof(Measurement.MachineId).Camelize(), int.Parse(group))),
                 new BsonDocument("$sort", new BsonDocument(nameof(Measurement.ReadingTime).Camelize(), -1)),
@@ -38,9 +41,10 @@ namespace EYEAPI.Hubs
                 new BsonDocument("$replaceRoot", new BsonDocument("newRoot", "$latestDocument")),
             };
 
-            var aggregation = await collection.AggregateAsync<BsonDocument>(pipeline);
-            var bsonList = await aggregation.ToListAsync();
-            var measurements = bsonList.Select(bson => BsonSerializer.Deserialize<Measurement>(bson)).ToList();
+            var aggregation = await collection.AggregateAsync(PipelineDefinition<BsonDocument, Measurement>.Create(pipeline));
+            
+
+            List<Measurement>? measurements = await aggregation.ToListAsync();
 
             return measurements;
         }
