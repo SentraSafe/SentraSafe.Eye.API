@@ -9,22 +9,20 @@ namespace EYEAPI.Services.LogService
 {
     public class LogService(IEyeRepository eyeRepository, IMapper mapper) : ILogService
     {
-        public Task DeleteSublocationByIdAsync(int locationId)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams)
         {
-            throw new NotImplementedException();
+            eyeRepository.
         }
 
-        public Task<LogDto> PostNewLogAsync(CreateLogDto newLog)
+        public async Task<LogDto> AddLogAsync(CreateLogDto newLog) =>  mapper.Map<LogDto>(await eyeRepository.AddLogAsync(mapper.Map<Log>(newLog)));
+        
+
+        public Task<LogDto> UpdateLogAsync(Log log)
         {
             throw new NotImplementedException();
         }
-
-        public Task<LogDto> UpdateAsync(LogDto log)
+        public Task DeleteLogByIdAsync(int locationId)
         {
             throw new NotImplementedException();
         }

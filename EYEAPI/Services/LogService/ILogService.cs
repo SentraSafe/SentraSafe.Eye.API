@@ -11,8 +11,8 @@ namespace EYEAPI.Services.LogService
     {
         Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams);
 
-        Task<LogDto> PostNewLogAsync(CreateLogDto newLog);
-        Task<LogDto> UpdateAsync(LogDto log);
-        Task DeleteSublocationByIdAsync(int locationId);
+        Task<LogDto> AddLogAsync(CreateLogDto newLog);
+        Task<LogDto> UpdateLogAsync(Log log);
+        Task DeleteLogByIdAsync(int locationId);
     }
 }
