@@ -22,8 +22,7 @@ namespace EYEAPI.Repositories
 
         #region Machine
 
-        public async Task<List<Machine>> GetMachinesAsync(
-            MachineSearchParamsDto searchParams) =>
+        public async Task<List<Machine>> GetMachinesAsync(MachineSearchParamsDto searchParams) =>
             await eyeContext.Machines
                 .AsNoTracking()
                 .WhereIfNotNull(searchParams.Name, m => EF.Functions.Like(m.Name, $"%{searchParams.Name}%"))
