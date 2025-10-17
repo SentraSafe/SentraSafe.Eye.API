@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EYEAPI.Models.Dtos.AlarmDtos;
+using EYEAPI.Models.Dtos.LogDtos;
 using EYEAPI.Models.Entities;
 using EYEAPI.Repositories;
 using MongoDB.Driver.Search;
@@ -8,14 +9,24 @@ namespace EYEAPI.Services.LogService
 {
     public class LogService(IEyeRepository eyeRepository, IMapper mapper) : ILogService
     {
-        public async Task<List<Alarm>> GetAlarmsAsync(AlarmSearchParamsDto searchParams) => await eyeRepository.GetAlarmsAsync(searchParams);
-        public async Task<Alarm> AddAlarmAsync(CreateAlarmDto createAlarm) => await eyeRepository.AddAlarmAsync(mapper.Map<Alarm>(createAlarm));
-
-        public async Task<Alarm> UpdateAlarmAsync(Alarm updateAlarm)
+        public Task DeleteSublocationByIdAsync(int locationId)
         {
-            Alarm editAlarm = mapper.Map<Alarm>(updateAlarm);
-            return mapper.Map<Alarm>(await eyeRepository.UpdateAlarmAsync(editAlarm));
+            throw new NotImplementedException();
         }
-        public async Task DeleteAlarmByIdAsync(int alarmId) => await eyeRepository.DeleteAlarmByIdAsync(alarmId);
+
+        public Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<LogDto> PostNewLogAsync(CreateLogDto newLog)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<LogDto> UpdateAsync(LogDto log)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

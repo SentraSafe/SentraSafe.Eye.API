@@ -1,13 +1,14 @@
 ﻿using EYEAPI.Models.Dtos.LocationDtos;
+using EYEAPI.Models.Dtos.SublocationDtos;
 using EYEAPI.Models.Entities;
 
 namespace EYEAPI.Services.SublocationService
 {
     public interface ISublocationService
     {
-        Task<LocationDto> AddLocationAsync(CreateLocationDto createLocation);
-        Task DeleteLocationByIdAsync(int locationId);
-        Task<List<LocationDto>> GetAllLocationsAsync();
-        Task<LocationDto> UpdateLocationAsync(LocationDto location);
+        Task<List<Sublocation>> GetSublocationByLocationAsync(int locationId);
+        Task<Sublocation> AddSublocationAsync(CreateSublocationDto createSublocation);
+        Task DeleteSublocationByIdAsync(int sublocationId);
+        Task<Sublocation> UpdateSublocationAsync(SublocationDto sublocation);
     }
 }

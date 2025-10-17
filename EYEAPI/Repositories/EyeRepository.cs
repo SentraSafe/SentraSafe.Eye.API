@@ -56,6 +56,18 @@ namespace EYEAPI.Repositories
         public async Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId) =>
             await eyeContext.Sublocations.WhereIfNotNull(locationId, sublocation => sublocation.Id == locationId)
             .ToListAsync();
+        public async Task<Sublocation> AddSublocationAsync(Sublocation newSublocation) => (await eyeContext.Sublocations.AddAsync(newSublocation)).Entity;
+        public async Task<Sublocation> UpdateSublocationAsync(Sublocation updateSublocation)
+        {
+            eyeContext.Sublocations.Update(updateSublocation);
+            await eyeContext.SaveChangesAsync();
+            return await GetSublocationByIdAsync(updateSublocation.Id);
+        }
+        public async Task DeleteSublocationByIdAsync(int sublocationId)
+        {
+            eyeContext.Sublocations.Remove(await GetSublocationByIdAsync(sublocationId));
+            await eyeContext.SaveChangesAsync();
+        }
         #endregion
 
         #region Location
