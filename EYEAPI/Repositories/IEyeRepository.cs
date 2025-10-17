@@ -8,8 +8,8 @@ namespace EYEAPI.Repositories
     public interface IEyeRepository
     {
         Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams);
-        Task<Machine> AddMachineAsync(Machine newMachine);
-        Task<MachineDto> UpdateMachineAsync(Machine updateMachine);
+        Task AddMachineAsync(Machine newMachine);
+        Task UpdateMachineAsync(Machine updateMachine);
         Task DeleteMachineByIdAsync(int machineId);
 
         Task<Sublocation> GetSublocationByIdAsync(int id);
@@ -24,5 +24,6 @@ namespace EYEAPI.Repositories
         Task<Alarm> AddAlarmAsync(Alarm newAlarm);
         Task<Alarm> UpdateAlarmAsync(Alarm updateAlarm);
         Task DeleteAlarmByIdAsync(int alarmId);
+        Task<MachineDto?> GetMachineByIdAsync(int machineId);
     }
 }

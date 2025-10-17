@@ -7,6 +7,7 @@ using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Dtos.SublocationDtos;
 using EYEAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 
 namespace EYEAPI.Repositories
@@ -22,23 +23,21 @@ namespace EYEAPI.Repositories
             .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
             .Select(machine => new MachineDto(machine))
             .ToListAsync();
-        public async Task<MachineDto> GetMachinesByIdAsync(int machineId) =>
+        public async Task<MachineDto?> GetMachineByIdAsync(int machineId) =>
             await eyeContext.Machines.WhereIfNotNull(machineId, machine => machine.Id == machineId)
             .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
             .Select(machine => new MachineDto(machine))
             .FirstOrDefaultAsync();
-        public async Task<Machine> AddMachineAsync(Machine newMachine) 
+        public async Task AddMachineAsync(Machine newMachine)
         {
             await eyeContext.Machines.AddAsync(newMachine);
             await eyeContext.SaveChangesAsync();
-            return newMachine;
         }
-        public async Task<MachineDto> UpdateMachineAsync(Machine updateMachine)
+        public async Task UpdateMachineAsync(Machine updateMachine)
         {
 
-            eyeContext.Machines.Update(updateMachine);
+            EntityEntry<Machine> entry = eyeContext.Machines.Update(updateMachine);
             await eyeContext.SaveChangesAsync();
-            return await GetMachinesByIdAsync(updateMachine.Id);
         }
         public async Task DeleteMachineByIdAsync(int machineId)
         {

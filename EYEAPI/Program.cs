@@ -55,7 +55,12 @@ builder.Services.AddSingleton<MongoClient>(s =>
     return new MongoClient(options.Value.ConnectionStrings.MongoDbConnectionString);
 });
 
-builder.Services.AddAutoMapper(expression => expression.AddMaps(typeof(Program).Assembly));
+builder.Services.AddAutoMapper((serviceProvider, expression) =>
+{
+    IOptions<AppSettings> options = serviceProvider.GetRequiredService<IOptions<AppSettings>>();
+    expression.AddMaps(typeof(Program).Assembly);
+    expression.LicenseKey = options.Value.AutoMapper.LicenseKey;
+}, typeof(Program).Assembly);
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<MqttClientFactory>();
