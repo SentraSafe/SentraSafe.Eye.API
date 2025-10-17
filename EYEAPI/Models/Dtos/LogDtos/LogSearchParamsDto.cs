@@ -7,7 +7,7 @@ namespace EYEAPI.Models.Dtos.LogDtos
     [AutoMap(typeof(Log))]
     public class LogSearchParamsDto
     {
-        public TimeSpan? Time { get; set; }
+        public DateTime? Time { get; set; }
         public Severity? Severity { get; set; }
         public int? MachineID { get; set; }
         public int? AlarmId { get; set; }

@@ -39,6 +39,7 @@ namespace EYEAPI.Repositories
         #endregion
 
         #region Logs
+        Task<List<Log>> GetLogsAsync(LogSearchParamsDto searchParams);
         Task<Log> AddLogAsync(Log newLogs);
         Task<Log> UpdateLogAsync(Log log);
         Task DeleteLogByIdAsync(int locationId);
