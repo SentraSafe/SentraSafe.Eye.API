@@ -104,7 +104,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 };
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.MapHub<MqttHub>("/mqttHub").RequireCors("AllowClient");
 app.MapControllers();
 
