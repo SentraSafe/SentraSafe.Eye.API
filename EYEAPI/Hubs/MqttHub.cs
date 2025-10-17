@@ -28,15 +28,15 @@ namespace EYEAPI.Hubs
 
             var pipeline = new[]
             {
-            new BsonDocument("$match", new BsonDocument(nameof(Measurement.MachineId), int.Parse(group))),
-            new BsonDocument("$sort", new BsonDocument(nameof(Measurement.ReadingTime), -1)),
-            new BsonDocument("$group", new BsonDocument
-            {
-                { nameof(Measurement.MachineId), "$Type" },
-                { "latestDocument", new BsonDocument("$first", "$$ROOT") }
-            }),
-            new BsonDocument("$replaceRoot", new BsonDocument("newRoot", "$latestDocument"))
-        };
+                new BsonDocument("$match", new BsonDocument(nameof(Measurement.MachineId), int.Parse(group))),
+                new BsonDocument("$sort", new BsonDocument(nameof(Measurement.ReadingTime), -1)),
+                new BsonDocument("$group", new BsonDocument
+                {
+                    { "_id", $"${nameof(Measurement.MeasurementType)}" },
+                    { "latestDocument", new BsonDocument("$first", "$$ROOT") }
+                }),
+                new BsonDocument("$replaceRoot", new BsonDocument("newRoot", "$latestDocument")),
+            };
 
             var aggregation = await collection.AggregateAsync<BsonDocument>(pipeline);
             var bsonList = await aggregation.ToListAsync();
