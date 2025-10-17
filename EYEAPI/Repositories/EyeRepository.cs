@@ -56,6 +56,18 @@ namespace EYEAPI.Repositories
         public async Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId) =>
             await eyeContext.Sublocations.WhereIfNotNull(locationId, sublocation => sublocation.Id == locationId)
             .ToListAsync();
+        public async Task<Sublocation> AddSublocationAsync(Sublocation newSublocation) => (await eyeContext.Sublocations.AddAsync(newSublocation)).Entity;
+        public async Task<Sublocation> UpdateSublocationAsync(Sublocation updateSublocation)
+        {
+            eyeContext.Sublocations.Update(updateSublocation);
+            await eyeContext.SaveChangesAsync();
+            return await GetSublocationByIdAsync(updateSublocation.Id);
+        }
+        public async Task DeleteSublocationByIdAsync(int sublocationId)
+        {
+            eyeContext.Sublocations.Remove(await GetSublocationByIdAsync(sublocationId));
+            await eyeContext.SaveChangesAsync();
+        }
         #endregion
 
         #region Location
@@ -107,6 +119,46 @@ namespace EYEAPI.Repositories
         {
             eyeContext.Alarms.Remove(await GetAlarmByIdAsync(alarmId));
             await eyeContext.SaveChangesAsync();
+        }
+        #endregion
+
+        #region Log
+        public async Task<List<Log>> GetLogsAsync(LogSearchParamsDto? searchParams) =>
+            await eyeContext.Logs.WhereIfNotNull(searchParams?.AlarmId, log => log.AlarmId == searchParams.AlarmId)
+                .WhereIfNotNull(searchParams?.IsHandled, log => log.IsHandled == searchParams.IsHandled)
+                .WhereIfNotNull(searchParams?.Severity, log => log.Severity >= searchParams.Severity)
+                .WhereIfNotNull(searchParams?.TimeStampFrom, log => log.TimeStamp >= searchParams.TimeStampFrom)
+                .WhereIfNotNull(searchParams?.TimeStampTo, log => log.TimeStamp <= searchParams.TimeStampTo)
+                .WhereIfNotNull(searchParams?.HandleTimeFrom, log => log.HandleTime >= searchParams.HandleTimeFrom)
+                .WhereIfNotNull(searchParams?.HandleTimeTo, log => log.HandleTime <= searchParams.HandleTimeTo)
+                .OrderBy(x => x.IsHandled)
+                .ThenByDescending(x => x.Severity)
+                .ThenByDescending(x => x.TimeStamp).ToListAsync();
+        public async Task<Log?> GetLogByIdAsync(int logId) => await eyeContext.Logs
+            .FirstAsync(log => logId == log.Id);
+        public async Task AddLogAsync(Log newLog)
+        {
+            await eyeContext.Logs.AddAsync(newLog);
+            await eyeContext.SaveChangesAsync();
+        }
+        public async Task UpdateLogAsync(Log log)
+        {
+            
+            eyeContext.Logs.Update(log);
+            await eyeContext.SaveChangesAsync();
+        }
+        public async Task DeleteLogByIdAsync(int logId)
+        {
+            eyeContext.Logs.Remove(await GetLogByIdAsync(logId));
+            await eyeContext.SaveChangesAsync();
+        }
+        public async Task<List<EventLog>> GetEventLogsAsync()
+        {
+            return await eyeContext.EventLogs.ToListAsync();
+        }
+        public async Task AddEventLogsAsync(List<EventLog> eventLogs)
+        {
+            await eyeContext.EventLogs.AddRangeAsync(eventLogs);
         }
         #endregion
     }

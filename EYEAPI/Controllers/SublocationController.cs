@@ -1,5 +1,5 @@
-﻿using EYEAPI.Models.Dtos.LocationDtos;
-using EYEAPI.Services.LocationService;
+﻿using EYEAPI.Models.Dtos.SublocationDtos;
+using EYEAPI.Services.SublocationService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,14 +7,14 @@ namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SublocationController : ControllerBase
+    public class SublocationController(ISublocationService sublocationService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllLocationsAsync()
+        public async Task<IActionResult> GetSublocationsAsync(int sublocationId)
         {
             try
             {
-                return Ok(await locationService.GetAllLocationsAsync());
+                return Ok(await sublocationService.GetSublocationByLocationAsync(sublocationId));
             }
             catch (Exception ex)
             {
@@ -23,11 +23,11 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewLocationAsync(CreateLocationDto newLocation)
+        public async Task<IActionResult> PostNewSublocationAsync(CreateSublocationDto newSublocation)
         {
             try
             {
-                return Ok(await locationService.AddLocationAsync(newLocation));
+                return Ok(await sublocationService.AddSublocationAsync(newSublocation));
             }
             catch (Exception ex)
             {
@@ -36,11 +36,11 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateLocationAsync(LocationDto location)
+        public async Task<IActionResult> UpdateSublocationAsync(SublocationDto location)
         {
             try
             {
-                return Ok(await locationService.UpdateLocationAsync(location));
+                return Ok(await sublocationService.UpdateSublocationAsync(location));
             }
             catch (Exception ex)
             {
@@ -49,11 +49,11 @@ namespace EYEAPI.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteLocationByIdAsync(int locationId)
+        public async Task<IActionResult> DeleteSublocationByIdAsync(int locationId)
         {
             try
             {
-                await locationService.DeleteLocationByIdAsync(locationId);
+                await sublocationService.DeleteSublocationByIdAsync(locationId);
                 return Ok();
             }
             catch (Exception ex)

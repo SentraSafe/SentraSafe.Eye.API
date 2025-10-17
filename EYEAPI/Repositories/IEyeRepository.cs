@@ -14,6 +14,7 @@ namespace EYEAPI.Repositories
 
         Task<Sublocation> GetSublocationByIdAsync(int id);
         Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId);
+        Task<SublocationDto> AddSublocationAsync(CreateSublocationDto createSublocation);
 
         Task<List<Location>> GetAllLocationsAsync();
         Task<Location> AddLocationAsync(Location newLocation);
@@ -24,5 +25,19 @@ namespace EYEAPI.Repositories
         Task<Alarm> AddAlarmAsync(Alarm newAlarm);
         Task<Alarm> UpdateAlarmAsync(Alarm updateAlarm);
         Task DeleteAlarmByIdAsync(int alarmId);
+        Task DeleteSublocationByIdAsync(int sublocationId);
+        #endregion
+
+        #region Logs
+        Task AddLogAsync(Log newLogs);
+        Task UpdateLogAsync(Log log);
+        Task DeleteLogByIdAsync(int logId);
+        Task<Log?> GetLogByIdAsync(int logId);
+        #endregion
+
+        Task<List<Log>> GetLogsAsync(LogSearchParamsDto? searchParams);
+        Task<Alarm> GetAlarmByIdAsync(int alarmId);
+        Task<List<EventLog>> GetEventLogsAsync();
+        Task AddEventLogsAsync(List<EventLog> eventLogs);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace EYEAPI.Models.Entities
 {
+
     public class Machine
     {
         public int Id { get; set; }

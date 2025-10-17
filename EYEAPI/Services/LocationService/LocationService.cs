@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EYEAPI.Models.Dtos.LocationDtos;
+using EYEAPI.Models.Dtos.LogDtos;
 using EYEAPI.Models.Entities;
 using EYEAPI.Repositories;
 
