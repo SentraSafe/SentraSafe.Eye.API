@@ -85,6 +85,7 @@ jobs:
           file: ./EYEAPI/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: | 
+            ${{ steps.meta.outputs.tags }}
             ${{ env.IMAGE_TAG }} 
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
