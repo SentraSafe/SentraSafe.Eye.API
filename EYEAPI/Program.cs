@@ -88,6 +88,17 @@ builder.Services.AddScoped<IEyeRepository, EyeRepository>();
 builder.Services.AddHostedService<SensorWorkerService>();
 builder.Services.AddHostedService<WebSocketWorkerService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowClient", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 
 var app = builder.Build();
 
