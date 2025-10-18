@@ -8,6 +8,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MQTTnet;
 using System.Linq.Expressions;
+using MongoDB.Bson.Serialization.Serializers;
 
 namespace EYEAPI.Hubs
 {
@@ -21,16 +22,12 @@ namespace EYEAPI.Hubs
         public async Task<List<Measurement>> Subscribe(string group)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, group);
-            FilterDefinition<Measurement>? filterDefinition = Builders<Measurement>.Filter.Where(machineId => machineId.MachineId == int.Parse(group));
-
-            logger.LogInformation("Subscribed to: {group}", group);
-
 
             IMongoDatabase? database = mongoClient.GetDatabase("SensorData");
             IMongoCollection<BsonDocument>? collection = database.GetCollection<BsonDocument>("Sensor");
 
-            BsonDocument[] pipeline = new[]
-            {
+            BsonDocument[] pipeline =
+            [
                 new BsonDocument("$match", new BsonDocument(nameof(Measurement.MachineId).Camelize(), int.Parse(group))),
                 new BsonDocument("$sort", new BsonDocument(nameof(Measurement.ReadingTime).Camelize(), -1)),
                 new BsonDocument("$group", new BsonDocument
@@ -39,13 +36,12 @@ namespace EYEAPI.Hubs
                     { "latestDocument", new BsonDocument("$first", "$$ROOT") }
                 }),
                 new BsonDocument("$replaceRoot", new BsonDocument("newRoot", "$latestDocument")),
-            };
+                new BsonDocument("$project", new BsonDocument("_id", 0))
+            ];
+
 
             var aggregation = await collection.AggregateAsync(PipelineDefinition<BsonDocument, Measurement>.Create(pipeline));
-            
-
             List<Measurement>? measurements = await aggregation.ToListAsync();
-
             return measurements;
         }
     }
