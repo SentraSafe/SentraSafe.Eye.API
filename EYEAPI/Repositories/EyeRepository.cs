@@ -8,7 +8,6 @@ using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Dtos.SublocationDtos;
 using EYEAPI.Models.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 
 namespace EYEAPI.Repositories
@@ -36,8 +35,7 @@ namespace EYEAPI.Repositories
         }
         public async Task UpdateMachineAsync(Machine updateMachine)
         {
-
-            EntityEntry<Machine> entry = eyeContext.Machines.Update(updateMachine);
+            eyeContext.Machines.Update(updateMachine);
             await eyeContext.SaveChangesAsync();
         }
         public async Task DeleteMachineByIdAsync(int machineId)
@@ -54,9 +52,13 @@ namespace EYEAPI.Repositories
             await eyeContext.Sublocations.WhereIfNotNull(id, sublocation => sublocation.Id == id)
             .Include(sublocation => sublocation.Location).FirstAsync();
         public async Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId) =>
-            await eyeContext.Sublocations.WhereIfNotNull(locationId, sublocation => sublocation.Id == locationId)
+            await eyeContext.Sublocations.WhereIfNotNull(locationId, sublocation => sublocation.Location.Id == locationId)
             .ToListAsync();
-        public async Task<Sublocation> AddSublocationAsync(Sublocation newSublocation) => (await eyeContext.Sublocations.AddAsync(newSublocation)).Entity;
+        public async Task AddSublocationAsync(Sublocation newSublocation)
+        {
+            await eyeContext.Sublocations.AddAsync(newSublocation);
+            await eyeContext.SaveChangesAsync();
+        }
         public async Task UpdateSublocationAsync(Sublocation updateSublocation)
         {
             eyeContext.Sublocations.Update(updateSublocation);
@@ -73,21 +75,18 @@ namespace EYEAPI.Repositories
         public async Task<List<Location>> GetAllLocationsAsync() => await eyeContext.Locations
             .Include(location => location.Sublocations)
             .ToListAsync();
-        private async Task<Location?> GetLocationByIdAsync(int locationId) => await eyeContext.Locations
+        public async Task<Location?> GetLocationByIdAsync(int locationId) => await eyeContext.Locations
             .Include(location => location.Sublocations)
-            .FirstOrDefaultAsync();
-        public async Task<Location> AddLocationAsync(Location newLocation) => (await eyeContext.Locations.AddAsync(newLocation)).Entity;
-        public async Task<Location> UpdateLocationAsync(LocationDto locationDto)
+            .FirstOrDefaultAsync(location => location.Id == locationId);
+        public async Task AddLocationAsync(Location newLocation)
         {
-            var location = new Location
-            {
-                Id = locationDto.Id,
-                Name = locationDto.Name,
-                Sublocations = (ICollection<Sublocation>)locationDto.Sublocations
-            };
+            await eyeContext.Locations.AddAsync(newLocation);
+            await eyeContext.SaveChangesAsync();
+        }
+        public async Task UpdateLocationAsync(Location location)
+        {
             eyeContext.Locations.Update(location);
             await eyeContext.SaveChangesAsync();
-            return await GetLocationByIdAsync(locationDto.Id);
         }
         public async Task DeleteLocationByIdAsync(int locationId)
         {
@@ -105,14 +104,17 @@ namespace EYEAPI.Repositories
             .WhereIfNotNull(searchParams.Severity, alarm => alarm.Severity == searchParams.Severity)
             .Include(alarm => alarm.Machine)
             .ToListAsync();
-        private async Task<Alarm?> GetAlarmByIdAsync(int alarmId) => await eyeContext.Alarms
-           .FirstOrDefaultAsync();
-        public async Task<Alarm> AddAlarmAsync(Alarm newAlarm) => (await eyeContext.Alarms.AddAsync(newAlarm)).Entity;
-        public async Task<Alarm> UpdateAlarmAsync(Alarm updateAlarm)
+        public async Task<Alarm?> GetAlarmByIdAsync(int alarmId) => await eyeContext.Alarms
+           .FirstOrDefaultAsync(alarm => alarm.Id == alarmId);
+        public async Task AddAlarmAsync(Alarm newAlarm)
+        {
+            await eyeContext.Alarms.AddAsync(newAlarm);
+            await eyeContext.SaveChangesAsync();
+        }
+        public async Task UpdateAlarmAsync(Alarm updateAlarm)
         {
             eyeContext.Alarms.Update(updateAlarm);
             await eyeContext.SaveChangesAsync();
-            return await GetAlarmByIdAsync(updateAlarm.Id);
         }
         public async Task DeleteAlarmByIdAsync(int alarmId)
         {
@@ -126,22 +128,20 @@ namespace EYEAPI.Repositories
         public async Task<List<Log>> GetLogsAsync(LogSearchParamsDto searchParams) =>
             await eyeContext.Logs.WhereIfNotNull(searchParams.AlarmId, log => log.AlarmId == searchParams.AlarmId).ToListAsync();
 
-        private async Task<Log?> GetLogByIdAsync(int logId) => await eyeContext.Logs
+        public async Task<Log?> GetLogByIdAsync(int logId) => await eyeContext.Logs
             .FirstAsync(log => logId == log.Id);
-        public async Task<Log> AddLogAsync(Log newLog) => (await eyeContext.Logs.AddAsync(newLog)).Entity;
-        public async Task<Log> UpdateLogAsync(Log log)
+        public async Task AddLogAsync(Log newLog) => await eyeContext.Logs.AddAsync(newLog);
+        public async Task UpdateLogAsync(Log log)
         {
             
             eyeContext.Logs.Update(log);
             await eyeContext.SaveChangesAsync();
-            return await GetLogByIdAsync(log.Id);
         }
-        public async Task DeleteLogByIdAsync(int locationId)
+        public async Task DeleteLogByIdAsync(int logId)
         {
-            eyeContext.Locations.Remove(await GetLocationByIdAsync(locationId));
+            eyeContext.Logs.Remove(await GetLogByIdAsync(logId));
             await eyeContext.SaveChangesAsync();
         }
-        
         #endregion
     }
 }
