@@ -123,8 +123,8 @@ namespace EYEAPI.Repositories
 
         #region Log
 
-        public async Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams) =>
-            await eyeContext.Logs.WhereIfNotNull(searchParams.,log => log.AlarmId == searchParams)
+        public async Task<List<Log>> GetLogsAsync(LogSearchParamsDto searchParams) =>
+            await eyeContext.Logs.WhereIfNotNull(searchParams.AlarmId, log => log.AlarmId == searchParams.AlarmId).ToListAsync();
 
         private async Task<Log?> GetLogByIdAsync(int logId) => await eyeContext.Logs
             .FirstAsync(log => logId == log.Id);
