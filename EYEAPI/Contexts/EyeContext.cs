@@ -12,5 +12,6 @@ namespace EYEAPI.Contexts
         public DbSet<Location> Locations{ get; set; }
         public DbSet<Sublocation> Sublocations{ get; set; }
         public DbSet<Alarm> Alarms{ get; set; }
+        public DbSet<Log> Logs{ get; set; }
     }
 }
