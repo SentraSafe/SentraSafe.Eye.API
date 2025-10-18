@@ -3,6 +3,7 @@ using EYEAPI.Contexts;
 using EYEAPI.Exstensions;
 using EYEAPI.Models.Dtos.AlarmDtos;
 using EYEAPI.Models.Dtos.LocationDtos;
+using EYEAPI.Models.Dtos.LogDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Dtos.SublocationDtos;
 using EYEAPI.Models.Entities;
@@ -55,6 +56,17 @@ namespace EYEAPI.Repositories
         public async Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId) =>
             await eyeContext.Sublocations.WhereIfNotNull(locationId, sublocation => sublocation.Id == locationId)
             .ToListAsync();
+        public async Task<Sublocation> AddSublocationAsync(Sublocation newSublocation) => (await eyeContext.Sublocations.AddAsync(newSublocation)).Entity;
+        public async Task UpdateSublocationAsync(Sublocation updateSublocation)
+        {
+            eyeContext.Sublocations.Update(updateSublocation);
+            await eyeContext.SaveChangesAsync();
+        }
+        public async Task DeleteSublocationByIdAsync(int sublocationId)
+        {
+            eyeContext.Sublocations.Remove(await GetSublocationByIdAsync(sublocationId));
+            await eyeContext.SaveChangesAsync();
+        }
         #endregion
 
         #region Location
@@ -107,6 +119,29 @@ namespace EYEAPI.Repositories
             eyeContext.Alarms.Remove(await GetAlarmByIdAsync(alarmId));
             await eyeContext.SaveChangesAsync();
         }
+        #endregion
+
+        #region Log
+
+        public async Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams) =>
+            await eyeContext.Logs.WhereIfNotNull(searchParams.,log => log.AlarmId == searchParams)
+
+        private async Task<Log?> GetLogByIdAsync(int logId) => await eyeContext.Logs
+            .FirstAsync(log => logId == log.Id);
+        public async Task<Log> AddLogAsync(Log newLog) => (await eyeContext.Logs.AddAsync(newLog)).Entity;
+        public async Task<Log> UpdateLogAsync(Log log)
+        {
+            
+            eyeContext.Logs.Update(log);
+            await eyeContext.SaveChangesAsync();
+            return await GetLogByIdAsync(log.Id);
+        }
+        public async Task DeleteLogByIdAsync(int locationId)
+        {
+            eyeContext.Locations.Remove(await GetLocationByIdAsync(locationId));
+            await eyeContext.SaveChangesAsync();
+        }
+        
         #endregion
     }
 }
