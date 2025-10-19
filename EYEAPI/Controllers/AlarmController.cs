@@ -38,7 +38,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> PutUpdateAlarmAsync(Alarm alarm)
+        public async Task<IActionResult> PutUpdateAlarmAsync(CreateAlarmDto alarm)
         {
             try
             {
@@ -52,11 +52,11 @@ namespace EYEAPI.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteAlarmByIdAsync(int machinceId)
+        public async Task<IActionResult> DeleteAlarmByIdAsync([FromQuery]int alarmId)
         {
             try
             {
-                await alarmService.DeleteAlarmByIdAsync(machinceId);
+                await alarmService.DeleteAlarmByIdAsync(alarmId);
                 return Ok();
             }
             catch (Exception ex)

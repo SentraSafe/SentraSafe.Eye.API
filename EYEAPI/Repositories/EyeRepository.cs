@@ -7,6 +7,7 @@ using EYEAPI.Models.Dtos.LogDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Dtos.SublocationDtos;
 using EYEAPI.Models.Entities;
+using EYEAPI.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -15,18 +16,16 @@ namespace EYEAPI.Repositories
     public class EyeRepository(EyeContext eyeContext, IMapper mapper) : IEyeRepository
     {
         #region Machine
-        public async Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams) =>
+        public async Task<List<Machine>> GetMachinesAsync(MachineSearchParamsDto searchParams) =>
             await eyeContext.Machines.WhereIfNotNull(searchParams.Name, machine => machine.Name.Contains(searchParams.Name))
             .WhereIfNotNull(searchParams.LocationId, machine => machine.Sublocation.Location.Id == searchParams.LocationId)
             .WhereIfNotNull(searchParams.SublocationId, machine => machine.Sublocation.Id == searchParams.SublocationId)
             .WhereIfNotNull(searchParams.MachineType, machine => machine.Type == searchParams.MachineType)
             .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
-            .Select(machine => new MachineDto(machine))
             .ToListAsync();
-        public async Task<MachineDto?> GetMachineByIdAsync(int machineId) =>
+        public async Task<Machine?> GetMachineByIdAsync(int machineId) =>
             await eyeContext.Machines.WhereIfNotNull(machineId, machine => machine.Id == machineId)
             .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
-            .Select(machine => new MachineDto(machine))
             .FirstOrDefaultAsync();
         public async Task AddMachineAsync(Machine newMachine)
         {
@@ -100,7 +99,7 @@ namespace EYEAPI.Repositories
             await eyeContext.Alarms.WhereIfNotNull(searchParams.Id, alarm => alarm.Id == searchParams.Id)
             .WhereIfNotNull(searchParams.Title, alarm => alarm.Title == searchParams.Title)
             .WhereIfNotNull(searchParams.MachineId, alarm => alarm.MachineId == searchParams.MachineId)
-            .WhereIfNotNull(searchParams.MachineType, alarm => alarm.MachineType == searchParams.MachineType)
+            .WhereIfNotNull(searchParams.ValueType, alarm => alarm.ValueType == searchParams.ValueType)
             .WhereIfNotNull(searchParams.Severity, alarm => alarm.Severity == searchParams.Severity)
             .Include(alarm => alarm.Machine)
             .ToListAsync();
@@ -125,12 +124,25 @@ namespace EYEAPI.Repositories
 
         #region Log
 
-        public async Task<List<Log>> GetLogsAsync(LogSearchParamsDto searchParams) =>
-            await eyeContext.Logs.WhereIfNotNull(searchParams.AlarmId, log => log.AlarmId == searchParams.AlarmId).ToListAsync();
+        public async Task<List<Log>> GetLogsAsync(LogSearchParamsDto? searchParams) =>
+            await eyeContext.Logs.WhereIfNotNull(searchParams?.AlarmId, log => log.AlarmId == searchParams.AlarmId)
+                .WhereIfNotNull(searchParams?.IsHandled, log => log.IsHandled == searchParams.IsHandled)
+                .WhereIfNotNull(searchParams?.Severity, log => log.Severity >= searchParams.Severity)
+                .WhereIfNotNull(searchParams?.TimeStampFrom, log => log.TimeStamp >= searchParams.TimeStampFrom)
+                .WhereIfNotNull(searchParams?.TimeStampTo, log => log.TimeStamp <= searchParams.TimeStampTo)
+                .WhereIfNotNull(searchParams?.HandleTimeFrom, log => log.HandleTime >= searchParams.HandleTimeFrom)
+                .WhereIfNotNull(searchParams?.HandleTimeTo, log => log.HandleTime <= searchParams.HandleTimeTo)
+                .OrderBy(x => x.IsHandled)
+                .ThenByDescending(x => x.Severity)
+                .ThenByDescending(x => x.TimeStamp).ToListAsync();
 
         public async Task<Log?> GetLogByIdAsync(int logId) => await eyeContext.Logs
             .FirstAsync(log => logId == log.Id);
-        public async Task AddLogAsync(Log newLog) => await eyeContext.Logs.AddAsync(newLog);
+        public async Task AddLogAsync(Log newLog)
+        {
+            await eyeContext.Logs.AddAsync(newLog);
+            await eyeContext.SaveChangesAsync();
+        }
         public async Task UpdateLogAsync(Log log)
         {
             

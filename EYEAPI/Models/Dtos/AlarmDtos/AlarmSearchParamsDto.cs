@@ -7,7 +7,7 @@ namespace EYEAPI.Models.Dtos.AlarmDtos
         public int? Id { get; set; }
         public string? Title { get; set; }
         public int? MachineId { get; set; }
-        public MachineType? MachineType { get; set; }
+        public int? ValueType { get; set; }
         public Severity? Severity { get; set; }
     }
 }

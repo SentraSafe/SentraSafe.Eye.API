@@ -10,7 +10,7 @@ namespace EYEAPI.Services.LogService
     public class LogService(IEyeRepository eyeRepository, IMapper mapper) : ILogService
     {
 
-        public async Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams)
+        public async Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto? searchParams)
         {
             return mapper.Map<List<LogDto>>(await eyeRepository.GetLogsAsync(searchParams));
         }
@@ -31,6 +31,16 @@ namespace EYEAPI.Services.LogService
         public async Task DeleteLogByIdAsync(int logId)
         {
             await eyeRepository.DeleteLogByIdAsync(logId);
+        }
+
+        public async Task HandleLog(HandleLogDto handleLogDto)
+        {
+            Log? log = await eyeRepository.GetLogByIdAsync(handleLogDto.Id);
+            log.HandledBy = handleLogDto.HandledBy;
+            log.HandleTime = DateTime.Now;
+            log.IsHandled = true;
+            log.Description = handleLogDto.Description;
+            await eyeRepository.UpdateLogAsync(log);
         }
     }
 }

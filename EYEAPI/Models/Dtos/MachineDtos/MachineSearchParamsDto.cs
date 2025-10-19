@@ -5,7 +5,6 @@ using EYEAPI.Models.Enums;
 
 namespace EYEAPI.Models.Dtos.MachineDtos
 {
-    [AutoMap(typeof(Machine))]
 
     public class MachineSearchParamsDto
     {

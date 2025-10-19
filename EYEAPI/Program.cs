@@ -20,6 +20,8 @@ using EYEAPI.Services.SublocationService;
 using EYEAPI.Services.LogService;
 using EYEAPI.Controllers;
 using EYEAPI.Hubs;
+using EYEAPI.Models.Dtos.MachineDtos;
+using EYEAPI.Models.Entities;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +63,9 @@ builder.Services.AddAutoMapper((serviceProvider, expression) =>
     IOptions<AppSettings> options = serviceProvider.GetRequiredService<IOptions<AppSettings>>();
     expression.AddMaps(typeof(Program).Assembly);
     expression.LicenseKey = options.Value.AutoMapper.LicenseKey;
+    expression.CreateMap<Machine, MachineDto>()
+        .ForMember(x => x.Location, configurationExpression => configurationExpression.MapFrom(machine => machine.Sublocation.Location.Name))
+        .ForMember(x => x.Sublocation, configurationExpression => configurationExpression.MapFrom(machine => machine.Sublocation.Name));
 }, typeof(Program).Assembly);
 builder.Services.AddSignalR();
 
@@ -107,16 +112,10 @@ builder.Services.AddCors(options =>
 });
 
 
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-}
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 if (app.Environment.IsDevelopment())
 {
@@ -125,7 +124,8 @@ if (app.Environment.IsDevelopment())
 };
 
 // app.UseHttpsRedirection();
-app.MapHub<MqttHub>("/mqttHub").RequireCors("AllowClient");
+app.MapHub<MachineHub>($"/{nameof(MachineHub)}").RequireCors("AllowClient");
+app.MapHub<AlarmHub>($"/{nameof(AlarmHub)}").RequireCors("AllowClient");
 app.MapControllers();
 
 app.UseCors(policyBuilder =>

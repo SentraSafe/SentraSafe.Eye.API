@@ -10,11 +10,11 @@ namespace EYEAPI.Repositories
     public interface IEyeRepository
     {
         #region Machine
-        Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams);
+        Task<List<Machine>> GetMachinesAsync(MachineSearchParamsDto searchParams);
         Task AddMachineAsync(Machine newMachine);
         Task UpdateMachineAsync(Machine updateMachine);
         Task DeleteMachineByIdAsync(int machineId);
-        Task<MachineDto?> GetMachineByIdAsync(int machineId);
+        Task<Machine?> GetMachineByIdAsync(int machineId);
         #endregion
 
         #region Sublocation
@@ -47,7 +47,7 @@ namespace EYEAPI.Repositories
         Task<Log?> GetLogByIdAsync(int logId);
         #endregion
 
-        Task<List<Log>> GetLogsAsync(LogSearchParamsDto searchParams);
+        Task<List<Log>> GetLogsAsync(LogSearchParamsDto? searchParams);
         Task<Alarm> GetAlarmByIdAsync(int alarmId);
     }
 }

@@ -10,5 +10,6 @@ namespace EYEAPI.Models.Dtos.LogDtos
         public Severity Severity { get; set; }
         public int MachineId { get; set; }
         public int AlarmId { get; set; }
+        public string Value { get; set; }
     }
 }

@@ -5,9 +5,9 @@ namespace EYEAPI.Services.AlarmService
 {
     public interface IAlarmService
     {
-        Task<Alarm> AddAlarmAsync(CreateAlarmDto createAlarm);
+        Task<AlarmDto> AddAlarmAsync(CreateAlarmDto createAlarm);
         Task DeleteAlarmByIdAsync(int alarmId);
-        Task<List<Alarm>> GetAlarmsAsync(AlarmSearchParamsDto searchParams);
-        Task<Alarm> UpdateAlarmAsync(Alarm updateAlarm);
+        Task<List<AlarmDto>> GetAlarmsAsync(AlarmSearchParamsDto searchParams);
+        Task<AlarmDto> UpdateAlarmAsync(CreateAlarmDto updateAlarm);
     }
 }

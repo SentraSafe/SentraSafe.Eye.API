@@ -29,6 +29,20 @@ namespace EYEAPI.Controllers
 
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetMachineAsync(int id)
+        {
+            try
+            {
+                return Ok(await machineService.GetMachineAsync(id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostNewMachineAsync([FromBody] CreateMachineDto newMachine)
         {

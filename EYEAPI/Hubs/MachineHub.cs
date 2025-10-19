@@ -12,16 +12,13 @@ using MongoDB.Bson.Serialization.Serializers;
 
 namespace EYEAPI.Hubs
 {
-    public class MqttHub(MongoClient mongoClient, ILogger<MqttHub> logger) : Hub
+    public class MachineHub(MongoClient mongoClient, ILogger<MachineHub> logger) : Hub
     {
-        public async Task SendMessage(string payload)
+        public static string MachineGroupPrefix = "machine_";
+        public static string MachinesGroupPrefix = "machines_";
+        public async Task<List<Measurement>> SubscribeToMachine(string group)
         {
-            await Clients.All.SendAsync("ReceiveMessage", payload);
-        }
-
-        public async Task<List<Measurement>> Subscribe(string group)
-        {
-            await Groups.AddToGroupAsync(Context.ConnectionId, group);
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{MachineGroupPrefix}{group}");
 
             IMongoDatabase? database = mongoClient.GetDatabase("SensorData");
             IMongoCollection<BsonDocument>? collection = database.GetCollection<BsonDocument>("Sensor");
@@ -43,6 +40,26 @@ namespace EYEAPI.Hubs
             var aggregation = await collection.AggregateAsync(PipelineDefinition<BsonDocument, Measurement>.Create(pipeline));
             List<Measurement>? measurements = await aggregation.ToListAsync();
             return measurements;
+        }
+
+        public async Task UnsubscribeToMachine(string[] groups)
+        {
+            foreach (string group in groups)
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{MachineGroupPrefix}{group}");
+        }
+
+        public async Task SubscribeToMachines(string[] groups)
+        {
+            foreach (string group in groups)
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"{MachinesGroupPrefix}{group}");
+
+
+        }
+
+        public async Task UnsubscribeToMachines(string[] groups)
+        {
+            foreach (string group in groups)
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{MachinesGroupPrefix}{group}");
         }
     }
 }

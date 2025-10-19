@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace EYEAPI.BackgroundServices
 {
-    public class WebSocketWorkerService(IHubContext<MqttHub> hubContext, MqttClientOptionsBuilder mqttClientOptions, ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient, IOptions<AppSettings> appSettings) : BackgroundService
+    public class WebSocketWorkerService(IHubContext<MachineHub> hubContext, MqttClientOptionsBuilder mqttClientOptions, ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient, IOptions<AppSettings> appSettings) : BackgroundService
     {
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
@@ -37,7 +37,7 @@ namespace EYEAPI.BackgroundServices
             var payload = eventArgs.ApplicationMessage.ConvertPayloadToString();
             Measurement? telemetry = JsonSerializer.Deserialize<Measurement>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             
-            await hubContext.Clients.Groups(telemetry.MachineId.ToString()).SendAsync("OnMessageRecived", telemetry);
+            await hubContext.Clients.Groups($"{MachineHub.MachineGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("OnMessageRecived", telemetry);
             return;
         }
     }
