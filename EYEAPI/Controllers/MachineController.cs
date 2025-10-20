@@ -34,7 +34,7 @@ namespace EYEAPI.Controllers
         {
             try
             {
-                return Ok(await machineService.GetMachineAsync(id));
+                return Ok(await machineService.GetMachineByIdAsync(id));
             }
             catch (Exception ex)
             {

@@ -42,5 +42,12 @@ namespace EYEAPI.Services.LogService
             log.Description = handleLogDto.Description;
             await eyeRepository.UpdateLogAsync(log);
         }
+        
+        public async Task<List<EventLogDto>> GetEventLogsAsync() =>        
+            mapper.Map<List<EventLogDto>>(await eyeRepository.GetEventLogsAsync());
+        
+
+        public async Task AddEventLogsAsync(List<EventLogDto> eventLogs) =>    
+            await eyeRepository.AddEventLogsAsync(mapper.Map<List<EventLog>>(eventLogs));
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using EYEAPI.Contexts;
 using EYEAPI.Exstensions;
 using EYEAPI.Models.Dtos.AlarmDtos;       // Only for search params DTOs
@@ -30,7 +31,7 @@ namespace EYEAPI.Repositories
                 .ThenInclude(s => s.Location)
                 .FirstOrDefaultAsync(m => m.Id == machineId);
 
-        public async Task<Machine> AddMachineAsync(Machine newMachine)
+        public async Task AddMachineAsync(Machine newMachine)
         {
             await eyeContext.Machines.AddAsync(newMachine);
             await eyeContext.SaveChangesAsync();
