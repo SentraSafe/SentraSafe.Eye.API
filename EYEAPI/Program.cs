@@ -20,6 +20,7 @@ using EYEAPI.Services.SublocationService;
 using EYEAPI.Services.LogService;
 using EYEAPI.Controllers;
 using EYEAPI.Hubs;
+using EYEAPI.Models.Dtos.LocationDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Entities;
 

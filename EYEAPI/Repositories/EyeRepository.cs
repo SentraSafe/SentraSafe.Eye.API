@@ -58,6 +58,12 @@ namespace EYEAPI.Repositories
             await eyeContext.Sublocations.AddAsync(newSublocation);
             await eyeContext.SaveChangesAsync();
         }
+        
+        public async Task AddSublocationsAsync(List<Sublocation> newSublocations)
+        {
+            await eyeContext.Sublocations.AddRangeAsync(newSublocations);
+            await eyeContext.SaveChangesAsync();
+        }
         public async Task UpdateSublocationAsync(Sublocation updateSublocation)
         {
             eyeContext.Sublocations.Update(updateSublocation);
@@ -73,6 +79,14 @@ namespace EYEAPI.Repositories
         #region Location
         public async Task<List<Location>> GetAllLocationsAsync() => await eyeContext.Locations
             .Include(location => location.Sublocations)
+            .ThenInclude(sublocation => sublocation.Machines)
+            .Select(x => new Location()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Sublocations = x.Sublocations,
+                MachineCount = x.Sublocations.Sum(sublocation => sublocation.Machines.Count)
+            })
             .ToListAsync();
         public async Task<Location?> GetLocationByIdAsync(int locationId) => await eyeContext.Locations
             .Include(location => location.Sublocations)

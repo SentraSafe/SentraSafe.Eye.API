@@ -18,6 +18,12 @@ namespace EYEAPI.Services.SublocationService
             await eyeRepository.AddSublocationAsync(sublocation);
             return mapper.Map<Sublocation>(await eyeRepository.GetSublocationByIdAsync(sublocation.Id));
         }
+        
+        public async Task AddSublocationsAsync(List<CreateSublocationDto> createSublocations)
+        {
+            List<Sublocation> sublocations = mapper.Map<List<Sublocation>>(createSublocations);
+            await eyeRepository.AddSublocationsAsync(sublocations);
+        }
 
         public async Task DeleteSublocationByIdAsync(int sublocationId) => await eyeRepository.DeleteSublocationByIdAsync(sublocationId);
         public async Task<Sublocation> UpdateSublocationAsync(SublocationDto sublocation)

@@ -34,6 +34,20 @@ namespace EYEAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
+        [HttpPost("Bulk")]
+        public async Task<IActionResult> PostNewSublocationsAsync(List<CreateSublocationDto> newSublocations)
+        {
+            try
+            {
+                await sublocationService.AddSublocationsAsync(newSublocations);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPut]
         public async Task<IActionResult> UpdateSublocationAsync(SublocationDto location)
