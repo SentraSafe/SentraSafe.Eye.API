@@ -10,18 +10,20 @@ namespace EYEAPI.Services.MachineService
     public class MachineService(IEyeRepository eyeRepository, IMapper mapper) : IMachineService
     {
         public async Task<List<MachineDto>> GetMachinesAsync(MachineSearchParamsDto searchParams) => mapper.Map<List<MachineDto>>(await eyeRepository.GetMachinesAsync(searchParams));
+        public async Task<MachineDto> GetMachineAsync(int id) => mapper.Map<MachineDto>(await eyeRepository.GetMachineByIdAsync(id));
 
-        public async Task<MachineDto> AddMachineAsync(CreateMachineDto createMachine)
+        public async Task<MachineDto?> AddMachineAsync(CreateMachineDto createMachine)
         {
-            Sublocation sublocation = await eyeRepository.GetSublocationByIdAsync(createMachine.SublocationId);
-            Machine newMachine = await eyeRepository.AddMachineAsync(mapper.Map<Machine>(createMachine));
-            return new MachineDto(newMachine);
+            Machine newMachine = mapper.Map<Machine>(createMachine);
+            await eyeRepository.AddMachineAsync(newMachine);
+            return mapper.Map<MachineDto>(await eyeRepository.GetMachineByIdAsync(newMachine.Id));
         }
 
-        public async Task<MachineDto> UpdateMachineAsync(UpdateMachineDto updateMachine)
+        public async Task<MachineDto?> UpdateMachineAsync(UpdateMachineDto updateMachine)
         {
             Machine editMachine = mapper.Map<Machine>(updateMachine);
-            return mapper.Map<MachineDto>(await eyeRepository.UpdateMachineAsync(editMachine));
+            await eyeRepository.UpdateMachineAsync(editMachine);
+            return mapper.Map<MachineDto>(await eyeRepository.GetMachineByIdAsync(editMachine.Id));
         }
         public async Task DeleteMachineByIdAsync(int machineId) => await eyeRepository.DeleteMachineByIdAsync(machineId);
     }

@@ -10,5 +10,6 @@ namespace EYEAPI.Services.SublocationService
         Task<Sublocation> AddSublocationAsync(CreateSublocationDto createSublocation);
         Task DeleteSublocationByIdAsync(int sublocationId);
         Task<Sublocation> UpdateSublocationAsync(SublocationDto sublocation);
+        Task AddSublocationsAsync(List<CreateSublocationDto> createSublocations);
     }
 }

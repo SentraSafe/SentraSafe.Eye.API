@@ -9,7 +9,7 @@ namespace EYEAPI.Services.LogService
 {
     public interface ILogService
     {
-        Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams);
+        Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto? searchParams);
 
         Task<LogDto> AddLogAsync(CreateLogDto newLog);
         Task<LogDto> UpdateLogAsync(Log log);

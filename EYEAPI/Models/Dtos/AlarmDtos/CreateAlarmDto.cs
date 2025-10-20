@@ -1,7 +1,10 @@
-﻿namespace EYEAPI.Models.Dtos.AlarmDtos
+﻿using EYEAPI.Models.Enums;
+
+namespace EYEAPI.Models.Dtos.AlarmDtos
 {
     public class CreateAlarmDto
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public int MachineId { get; set; }

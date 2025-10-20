@@ -9,6 +9,7 @@ namespace EYEAPI.Models.Dtos.LocationDtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int? MachineCount { get; set; }
         public List<SublocationDto>? Sublocations { get; set; }
     }
 }

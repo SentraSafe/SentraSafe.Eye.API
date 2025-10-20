@@ -11,7 +11,7 @@ namespace EYEAPI.Controllers
     public class LogController(ILogService logService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetLogsAsync(LogSearchParamsDto searchParams)
+        public async Task<IActionResult> GetLogsAsync([FromQuery]LogSearchParamsDto searchParams)
         {
             try
             {
@@ -29,6 +29,20 @@ namespace EYEAPI.Controllers
             try
             {
                 return Ok(await logService.AddLogAsync(newLog));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("HandleLog")]
+        public async Task<IActionResult> HandleLogAsync(HandleLogDto newLog)
+        {
+            try
+            {
+                await logService.HandleLog(newLog);
+                return Ok();
             }
             catch (Exception ex)
             {

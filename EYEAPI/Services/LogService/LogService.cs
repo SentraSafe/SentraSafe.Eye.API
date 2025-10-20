@@ -9,29 +9,38 @@ namespace EYEAPI.Services.LogService
 {
     public class LogService(IEyeRepository eyeRepository, IMapper mapper) : ILogService
     {
-        public Task DeleteSublocationByIdAsync(int locationId)
+
+        public async Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto? searchParams)
         {
-            throw new NotImplementedException();
+            return mapper.Map<List<LogDto>>(await eyeRepository.GetLogsAsync(searchParams));
         }
 
-        public Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto searchParams)
+        public async Task<LogDto> AddLogAsync(CreateLogDto newLog)
         {
-            throw new NotImplementedException();
+            Log mappedNewLog = mapper.Map<Log>(newLog);
+            await eyeRepository.AddLogAsync(mappedNewLog);
+            return mapper.Map<LogDto>(await eyeRepository.GetLogByIdAsync(mappedNewLog.Id));
         }
+        
 
-        public Task<LogDto> PostNewLogAsync(CreateLogDto newLog)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<LogDto> UpdateAsync(LogDto log)
         public async Task<LogDto> UpdateLogAsync(Log log)
         {
-            return mapper.Map<LogDto>(await eyeRepository.UpdateLogAsync(log));
+            await eyeRepository.UpdateLogAsync(log);
+            return mapper.Map<LogDto>(await eyeRepository.GetLogByIdAsync(log.Id));
         }
-        public async Task DeleteLogByIdAsync(int locationId)
+        public async Task DeleteLogByIdAsync(int logId)
         {
-            await eyeRepository.DeleteLocationByIdAsync(locationId);
+            await eyeRepository.DeleteLogByIdAsync(logId);
+        }
+
+        public async Task HandleLog(HandleLogDto handleLogDto)
+        {
+            Log? log = await eyeRepository.GetLogByIdAsync(handleLogDto.Id);
+            log.HandledBy = handleLogDto.HandledBy;
+            log.HandleTime = DateTime.Now;
+            log.IsHandled = true;
+            log.Description = handleLogDto.Description;
+            await eyeRepository.UpdateLogAsync(log);
         }
     }
 }

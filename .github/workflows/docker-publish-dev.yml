@@ -1,4 +1,4 @@
-name: Docker
+name: Docker Dev
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -9,11 +9,11 @@ on:
   schedule:
     - cron: '33 4 * * *'
   push:
-    branches: [ "master" ]
+    branches: [ "dev" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "dev" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -84,9 +84,7 @@ jobs:
           context: .
           file: ./EYEAPI/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: | 
-            ${{ steps.meta.outputs.tags }}
-            ${{ env.IMAGE_TAG }} 
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
