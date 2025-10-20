@@ -11,11 +11,11 @@ namespace EYEAPI.Controllers
     public class LogController(ILogService logService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetLogsAsync([FromQuery]LogSearchParamsDto searchParams)
+        public async Task<IActionResult> GetLogsAsync([FromQuery]EventLogSearchParamsDto searchParams)
         {
             try
             {
-                return Ok(await logService.GetLogsAsync(searchParams));
+                return Ok(await logService.GetEventLogsAsync(searchParams));
             }
             catch (Exception ex)
             {
@@ -24,11 +24,11 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewLogAsync(CreateLogDto newLog)
+        public async Task<IActionResult> PostNewEventLogAsync(CreateEventLogDto newEventLog)
         {
             try
             {
-                return Ok(await logService.AddLogAsync(newLog));
+                return Ok(await logService.AddEventLogAsync(newEventLog));
             }
             catch (Exception ex)
             {
@@ -37,38 +37,11 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost("HandleLog")]
-        public async Task<IActionResult> HandleLogAsync(HandleLogDto newLog)
+        public async Task<IActionResult> HandleLogAsync(HandleEventLogDto newEventLog)
         {
             try
             {
-                await logService.HandleLog(newLog);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateLogAsync(Log log)
-        {
-            try
-            {
-                return Ok(await logService.UpdateLogAsync(log));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> DeleteLogByIdAsync(int locationId)
-        {
-            try
-            {
-                await logService.DeleteLogByIdAsync(locationId);
+                await logService.HandleEventLog(newEventLog);
                 return Ok();
             }
             catch (Exception ex)

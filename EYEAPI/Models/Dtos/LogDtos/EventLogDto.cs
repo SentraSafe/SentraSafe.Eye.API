@@ -1,10 +1,13 @@
 ﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using EYEAPI.Models.Dtos.AlarmDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
+using EYEAPI.Models.Entities;
 using EYEAPI.Models.Enums;
 
 namespace EYEAPI.Models.Dtos.LogDtos
 {
+    [AutoMap(typeof(EventLog))]
     public class EventLogDto
     {
         public int MachineId { get; set; }

@@ -9,42 +9,26 @@ namespace EYEAPI.Services.LogService
 {
     public class LogService(IEyeRepository eyeRepository, IMapper mapper) : ILogService
     {
-
-        public async Task<List<LogDto>> GetLogsAsync(LogSearchParamsDto? searchParams)
+        public async Task<EventLogDto> AddEventLogAsync(CreateEventLogDto newEventLog)
         {
-            return mapper.Map<List<LogDto>>(await eyeRepository.GetLogsAsync(searchParams));
+            EventLog eventLog = mapper.Map<EventLog>(newEventLog);
+            await eyeRepository.AddEventLogAsync(eventLog);
+            return mapper.Map<EventLogDto>(eventLog);
         }
 
-        public async Task<LogDto> AddLogAsync(CreateLogDto newLog)
+        public async Task HandleEventLog(HandleEventLogDto handleLogDto)
         {
-            Log mappedNewLog = mapper.Map<Log>(newLog);
-            await eyeRepository.AddLogAsync(mappedNewLog);
-            return mapper.Map<LogDto>(await eyeRepository.GetLogByIdAsync(mappedNewLog.Id));
+            EventLog? eventLog = await eyeRepository.GetEventLogByIdAsync(handleLogDto.Id);
+            if (eventLog is null) return;
+            eventLog.HandledBy = handleLogDto.HandledBy;
+            eventLog.HandledAt = DateTime.Now;
+            eventLog.IsHandled = true;
+            eventLog.HandledFeedback = handleLogDto.HandledFeedback;
+            await eyeRepository.UpdateEventLogAsync(eventLog);
         }
         
-
-        public async Task<LogDto> UpdateLogAsync(Log log)
-        {
-            await eyeRepository.UpdateLogAsync(log);
-            return mapper.Map<LogDto>(await eyeRepository.GetLogByIdAsync(log.Id));
-        }
-        public async Task DeleteLogByIdAsync(int logId)
-        {
-            await eyeRepository.DeleteLogByIdAsync(logId);
-        }
-
-        public async Task HandleLog(HandleLogDto handleLogDto)
-        {
-            Log? log = await eyeRepository.GetLogByIdAsync(handleLogDto.Id);
-            log.HandledBy = handleLogDto.HandledBy;
-            log.HandleTime = DateTime.Now;
-            log.IsHandled = true;
-            log.Description = handleLogDto.Description;
-            await eyeRepository.UpdateLogAsync(log);
-        }
-        
-        public async Task<List<EventLogDto>> GetEventLogsAsync() =>        
-            mapper.Map<List<EventLogDto>>(await eyeRepository.GetEventLogsAsync());
+        public async Task<List<EventLogDto>> GetEventLogsAsync(EventLogSearchParamsDto? searchParams) =>        
+            mapper.Map<List<EventLogDto>>(await eyeRepository.GetEventLogsAsync(searchParams));
         
 
         public async Task AddEventLogsAsync(List<EventLogDto> eventLogs) =>    

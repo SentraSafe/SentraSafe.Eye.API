@@ -41,16 +41,15 @@ namespace EYEAPI.Repositories
         #endregion
 
         #region Logs
-        Task AddLogAsync(Log newLogs);
-        Task UpdateLogAsync(Log log);
-        Task DeleteLogByIdAsync(int logId);
-        Task<Log?> GetLogByIdAsync(int logId);
+
+        Task UpdateEventLogAsync(EventLog log);
+        Task<EventLog?> GetEventLogByIdAsync(int logId);
         #endregion
 
-        Task<List<Log>> GetLogsAsync(LogSearchParamsDto? searchParams);
         Task<Alarm> GetAlarmByIdAsync(int alarmId);
         Task AddSublocationsAsync(List<Sublocation> newSublocations);
-        Task<List<EventLog>> GetEventLogsAsync();
+        Task<List<EventLog>> GetEventLogsAsync(EventLogSearchParamsDto? searchParams);
         Task AddEventLogsAsync(List<EventLog> eventLogs);
+        Task AddEventLogAsync(EventLog newLog);
     }
 }

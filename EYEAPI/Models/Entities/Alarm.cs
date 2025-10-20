@@ -16,7 +16,7 @@ namespace EYEAPI.Models.Entities
         public string Description { get; set; }
         public int MachineId { get; set; }
         public Machine Machine { get; set; }
-        public ICollection<Log>? Logs { get; set; }
+        public ICollection<EventLog>? EventLogs { get; set; }
         public int ValueType { get; set; }
         public Severity Severity { get; set; }
         public int MaximumValue { get; set; }

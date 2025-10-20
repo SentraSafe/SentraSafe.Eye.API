@@ -24,12 +24,12 @@ public class AlarmHub(ILogService logService) : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{AlarmGroupPrefix}{group}");
     }
 
-    public async Task<List<LogDto>> SubscribeToAlarms(string[] groups)
+    public async Task<List<EventLogDto>> SubscribeToAlarms(string[] groups)
     {
         foreach (string group in groups)
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{AlarmsGroupPrefix}{group}");
 
-        return await logService.GetLogsAsync(new LogSearchParamsDto() { IsHandled = false, Severity = Severity.Warning });
+        return await logService.GetEventLogsAsync(new EventLogSearchParamsDto() { IsHandled = false, Severity = Severity.Warning, AlarmIdNotNull = true});
     }
 
     public async Task UnsubscribeToAlarms(string[] groups)

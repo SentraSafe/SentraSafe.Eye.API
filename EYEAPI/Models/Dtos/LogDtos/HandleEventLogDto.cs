@@ -1,8 +1,8 @@
 namespace EYEAPI.Models.Dtos.LogDtos;
 
-public class HandleLogDto
+public class HandleEventLogDto
 {
     public int Id { get; set; }
-    public string Description { get; set; }
+    public string HandledFeedback { get; set; }
     public string HandledBy { get; set; }
 }

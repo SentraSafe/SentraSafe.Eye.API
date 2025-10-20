@@ -14,6 +14,6 @@ namespace EYEAPI.Models.Entities
         public int SublocationId { get; set; }
         public Sublocation Sublocation { get; set; }
         public ICollection<Alarm>? Alarms { get; set; }
-        public ICollection<Log>? Logs { get; set; }
+        public ICollection<EventLog>? EventLogs { get; set; }
     }
 }

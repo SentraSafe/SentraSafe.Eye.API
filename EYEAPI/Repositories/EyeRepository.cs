@@ -133,6 +133,7 @@ namespace EYEAPI.Repositories
                 .WhereIfNotNull(searchParams.Title, alarm => alarm.Title == searchParams.Title)
             .WhereIfNotNull(searchParams.MachineId, alarm => alarm.MachineId == searchParams.MachineId)
             .WhereIfNotNull(searchParams.ValueType, alarm => alarm.ValueType == searchParams.ValueType)
+            .WhereIfNotNull(searchParams.ValueType, alarm => alarm.MaximumValue <= searchParams.Value)
             .WhereIfNotNull(searchParams.Severity, alarm => alarm.Severity == searchParams.Severity)
             .Include(alarm => alarm.Machine)
             .ToListAsync();
@@ -163,40 +164,33 @@ namespace EYEAPI.Repositories
 
         #region Log
 
-        public async Task<List<Log>> GetLogsAsync(LogSearchParamsDto? searchParams) =>
-            await eyeContext.Logs.WhereIfNotNull(searchParams?.AlarmId, log => log.AlarmId == searchParams.AlarmId)
+        public async Task<EventLog?> GetEventLogByIdAsync(int logId) => await eyeContext.EventLogs
+            .FirstAsync(log => logId == log.Id);
+        public async Task AddEventLogAsync(EventLog newLog)
+        {
+            await eyeContext.EventLogs.AddAsync(newLog);
+            await eyeContext.SaveChangesAsync();
+        }
+        public async Task UpdateEventLogAsync(EventLog log)
+        {
+            eyeContext.EventLogs.Update(log);
+            await eyeContext.SaveChangesAsync();
+        }
+       
+        public async Task<List<EventLog>> GetEventLogsAsync(EventLogSearchParamsDto? searchParams)
+        {
+            return await eyeContext.EventLogs.WhereIfNotNull(searchParams?.AlarmId, log => log.AlarmId == searchParams.AlarmId)
                 .WhereIfNotNull(searchParams?.IsHandled, log => log.IsHandled == searchParams.IsHandled)
                 .WhereIfNotNull(searchParams?.HandledBy, l => l.HandledBy.Contains(searchParams.HandledBy))
                 .WhereIfNotNull(searchParams?.Severity, log => log.Severity >= searchParams.Severity)
-                .WhereIfNotNull(searchParams?.TimeStampFrom, log => log.TimeStamp >= searchParams.TimeStampFrom)
-                .WhereIfNotNull(searchParams?.TimeStampTo, log => log.TimeStamp <= searchParams.TimeStampTo)
-                .WhereIfNotNull(searchParams?.HandleTimeFrom, log => log.HandleTime >= searchParams.HandleTimeFrom)
-                .WhereIfNotNull(searchParams?.HandleTimeTo, log => log.HandleTime <= searchParams.HandleTimeTo)
+                .WhereIfNotNull(searchParams?.TimeStampFrom, log => log.TimeCreated >= searchParams.TimeStampFrom)
+                .WhereIfNotNull(searchParams?.TimeStampTo, log => log.TimeCreated <= searchParams.TimeStampTo)
+                .WhereIfNotNull(searchParams?.HandledFrom, log => log.HandledAt >= searchParams.HandledFrom)
+                .WhereIfNotNull(searchParams?.HandledTo, log => log.HandledAt <= searchParams.HandledTo)
+                .WhereIfNotNull(searchParams?.AlarmIdNotNull, log => log.AlarmId != null)
                 .OrderBy(x => x.IsHandled)
                 .ThenByDescending(x => x.Severity)
-                .ThenByDescending(x => x.TimeStamp).ToListAsync();
-
-        public async Task<Log?> GetLogByIdAsync(int logId) => await eyeContext.Logs
-            .FirstAsync(log => logId == log.Id);
-        public async Task AddLogAsync(Log newLog)
-        {
-            await eyeContext.Logs.AddAsync(newLog);
-            await eyeContext.SaveChangesAsync();
-        }
-        public async Task UpdateLogAsync(Log log)
-        {
-            
-            eyeContext.Logs.Update(log);
-            await eyeContext.SaveChangesAsync();
-        }
-        public async Task DeleteLogByIdAsync(int logId)
-        {
-            eyeContext.Logs.Remove(await GetLogByIdAsync(logId));
-            await eyeContext.SaveChangesAsync();
-        }
-        public async Task<List<EventLog>> GetEventLogsAsync()
-        {
-            return await eyeContext.EventLogs.ToListAsync();
+                .ThenByDescending(x => x.TimeCreated).ToListAsync();
         }
         public async Task AddEventLogsAsync(List<EventLog> eventLogs)
         {
@@ -204,4 +198,6 @@ namespace EYEAPI.Repositories
         }
         #endregion
     }
+
+   
 }
