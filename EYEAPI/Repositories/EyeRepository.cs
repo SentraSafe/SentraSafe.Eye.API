@@ -166,7 +166,7 @@ namespace EYEAPI.Repositories
         public async Task<List<Log>> GetLogsAsync(LogSearchParamsDto? searchParams) =>
             await eyeContext.Logs.WhereIfNotNull(searchParams?.AlarmId, log => log.AlarmId == searchParams.AlarmId)
                 .WhereIfNotNull(searchParams?.IsHandled, log => log.IsHandled == searchParams.IsHandled)
-                .WhereIfNotNull(searchParams.HandledBy, l => l.HandledBy.Contains(searchParams.HandledBy))
+                .WhereIfNotNull(searchParams?.HandledBy, l => l.HandledBy.Contains(searchParams.HandledBy))
                 .WhereIfNotNull(searchParams?.Severity, log => log.Severity >= searchParams.Severity)
                 .WhereIfNotNull(searchParams?.TimeStampFrom, log => log.TimeStamp >= searchParams.TimeStampFrom)
                 .WhereIfNotNull(searchParams?.TimeStampTo, log => log.TimeStamp <= searchParams.TimeStampTo)

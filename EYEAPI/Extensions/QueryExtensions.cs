@@ -2,7 +2,7 @@
 
 namespace EYEAPI.Exstensions
 {
-    public static class QueryExstensions
+    public static class QueryExtensions
     {
         /// <summary>
         /// Applies the expression if the source is not null
