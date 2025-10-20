@@ -17,6 +17,6 @@ namespace EYEAPI.Services.LocationService
         }
 
         public async Task DeleteLocationByIdAsync(int locationId) => await eyeRepository.DeleteLocationByIdAsync(locationId);
-        public async Task<LocationDto> UpdateLocationAsync(LocationDto location) => mapper.Map<LocationDto>(await eyeRepository.UpdateLocationAsync(location));
+        public async Task<LocationDto> UpdateLocationAsync(LocationDto location) => mapper.Map<LocationDto>(await eyeRepository.UpdateLocationAsync(mapper.Map<Location>(location)));
     }
 }

@@ -25,8 +25,13 @@ namespace EYEAPI.Services.LogService
         }
 
         public Task<LogDto> UpdateAsync(LogDto log)
+        public async Task<LogDto> UpdateLogAsync(Log log)
         {
-            throw new NotImplementedException();
+            return mapper.Map<LogDto>(await eyeRepository.UpdateLogAsync(log));
+        }
+        public async Task DeleteLogByIdAsync(int locationId)
+        {
+            await eyeRepository.DeleteLocationByIdAsync(locationId);
         }
     }
 }

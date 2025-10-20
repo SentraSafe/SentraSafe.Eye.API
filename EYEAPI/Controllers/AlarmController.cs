@@ -7,7 +7,7 @@ namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AlarmController(ILogService alarmService) : ControllerBase
+    public class AlarmController(IAlarmService alarmService) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAlarmsAsync([FromQuery] AlarmSearchParamsDto searchParams)
