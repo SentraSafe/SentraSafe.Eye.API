@@ -57,7 +57,7 @@ namespace EYEAPI.BackgroundServices
 
             IEyeRepository eyeRepository = serviceScope.ServiceProvider.GetRequiredService<IEyeRepository>();
 
-            List<Alarm> alarms = await eyeRepository.GetAlarmsAsync(new AlarmSearchParamsDto() { MachineId = telemetry.MachineId, Value = (int)telemetry.Value });
+            List<Alarm> alarms = await eyeRepository.GetAlarmsAsync(new AlarmSearchParamsDto() { MachineId = telemetry.MachineId, Value = (int)telemetry.Value, ValueType = telemetry.MeasurementType});
 
             List<EventLog> eventLogs = alarms.Select(x => new EventLog()
             {
