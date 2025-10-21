@@ -13,31 +13,45 @@ using Microsoft.Extensions.Options;
 
 namespace EYEAPI.BackgroundServices
 {
-    public class SensorWorkerService(MqttClientOptionsBuilder mqttClientOptions,ILogger<SensorWorkerService> logger, IMqttService mqttService, IServiceScopeFactory scopeFactory, MongoClient mongoClient,IOptions<AppSettings> appSettings) : BackgroundService
+    public class SensorWorkerService(
+        MqttClientOptionsBuilder mqttClientOptions,
+        ILogger<SensorWorkerService> logger,
+        IMqttService mqttService,
+        IServiceScopeFactory scopeFactory,
+        MongoClient mongoClient,
+        IOptions<AppSettings> appSettings) : BackgroundService
     {
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine("Starting Sensor Worker Service");
             var brokerSettings = appSettings.Value.MqttBroker;
             var x = mqttClientOptions.WithCredentials(brokerSettings.Users[0], brokerSettings.Secrets[0]);
-            
-            await mqttService.ConnectAsync(mqttClientOptions.Build());
-            await mqttService.SubscribeAsync("measurement/#",MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);
+
+            await mqttService.ConnectAsync(x.Build());
+            await mqttService.SubscribeAsync("measurement/#", MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);
+            await base.StartAsync(cancellationToken);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (!mqttService.IsConnected)
+            Console.WriteLine("Sensor Worker Service is running.");
+            while (!stoppingToken.IsCancellationRequested)
             {
-                await mqttService.ReconnectAsync();
-            }        
+                if (!mqttService.IsConnected)
+                {
+                    await mqttService.ReconnectAsync();
+                }
+
+                await Task.Delay(5000, stoppingToken);
+            }
         }
-                                             
+
         private async Task OnMessageReceived(MqttApplicationMessageReceivedEventArgs eventArgs)
         {
             var payload = eventArgs.ApplicationMessage.ConvertPayloadToString();
-            Measurement? telemetry = JsonSerializer.Deserialize<Measurement>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });    
-            await mongoClient.GetDatabase("SensorData").GetCollection<Measurement>("Sensor").InsertOneAsync(telemetry);
-            
+            Measurement? telemetry = JsonSerializer.Deserialize<Measurement>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            await mongoClient.GetDatabase("Eye").GetCollection<Measurement>("Telemetry").InsertOneAsync(telemetry);
+
             return;
         }
     }

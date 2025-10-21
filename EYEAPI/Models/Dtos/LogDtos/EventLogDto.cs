@@ -10,6 +10,7 @@ namespace EYEAPI.Models.Dtos.LogDtos
     [AutoMap(typeof(EventLog))]
     public class EventLogDto
     {
+        public int Id { get; set; }
         public int MachineId { get; set; }
         public MachineDto Machine { get; set; }
         public Severity Severity { get; set; }
@@ -21,5 +22,6 @@ namespace EYEAPI.Models.Dtos.LogDtos
         public string? HandledBy { get; set; }
         public DateTime? HandledAt { get; set; }
         public string? HandledFeedback { get; set; }
+        public bool IsHandled { get; set; }
     }
 }

@@ -20,8 +20,8 @@ namespace EYEAPI.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{MachineGroupPrefix}{group}");
 
-            IMongoDatabase? database = mongoClient.GetDatabase("SensorData");
-            IMongoCollection<BsonDocument>? collection = database.GetCollection<BsonDocument>("Sensor");
+            IMongoDatabase? database = mongoClient.GetDatabase("Eye");
+            IMongoCollection<BsonDocument>? collection = database.GetCollection<BsonDocument>("Telemtry");
 
             BsonDocument[] pipeline =
             [

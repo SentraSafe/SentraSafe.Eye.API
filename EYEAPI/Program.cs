@@ -67,12 +67,6 @@ builder.Services.AddAutoMapper((serviceProvider, expression) =>
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<MqttClientFactory>();
-builder.Services.AddSingleton<IMqttClient>(serviceProvider =>
-{
-    MqttClientFactory mqttClientFactory = serviceProvider.GetRequiredService<MqttClientFactory>();
-    IMqttClient mqttClient = mqttClientFactory.CreateMqttClient();
-    return mqttClient;
-});
 builder.Services.AddSingleton<MqttClientOptionsBuilder>(serviceProvider =>
 {
     IOptions<AppSettings> options = serviceProvider.GetRequiredService<IOptions<AppSettings>>();
@@ -88,7 +82,7 @@ builder.Services.AddSingleton<MqttClientOptionsBuilder>(serviceProvider =>
 builder.Services.AddDbContext<EyeContext>(x => x.UseSqlServer("Name=Eye"));
 
 //Custom Services
-builder.Services.AddSingleton<IMqttService, MqttService>();
+builder.Services.AddTransient<IMqttService, MqttService>();
 builder.Services.AddScoped<IMachineService, MachineService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAlarmService, AlarmService>();

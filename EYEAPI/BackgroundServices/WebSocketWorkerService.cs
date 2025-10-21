@@ -23,19 +23,25 @@ namespace EYEAPI.BackgroundServices
     {
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine("Starting WebSocket Worker Service");
             var brokerSettings = appSettings.Value.MqttBroker;
             var x = mqttClientOptions.WithCredentials(brokerSettings.Users[1], brokerSettings.Secrets[1]);
 
-            await mqttService.ConnectAsync(mqttClientOptions.Build());
+            await mqttService.ConnectAsync(x.Build());
             await mqttService.SubscribeAsync("measurement/#", MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);
-            await machineHubContext.Clients.All.SendAsync("Hub is Online!");
+            await base.StartAsync(cancellationToken);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (!mqttService.IsConnected)
+            Console.WriteLine("WebSocket Worker Service is running.");
+            while (!stoppingToken.IsCancellationRequested)
             {
-                await mqttService.ReconnectAsync();
+                if (!mqttService.IsConnected)
+                {
+                    await mqttService.ReconnectAsync();
+                }
+                await Task.Delay(5000, stoppingToken);
             }
         }
 
