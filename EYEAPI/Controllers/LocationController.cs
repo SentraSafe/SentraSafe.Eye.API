@@ -2,6 +2,7 @@
 using EYEAPI.Models.Dtos.LocationDtos;
 using EYEAPI.Models.Entities;
 using EYEAPI.Services.LocationService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -10,6 +11,7 @@ namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LocationController(ILocationService locationService) : ControllerBase
     {
         [HttpGet]
@@ -26,6 +28,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostNewLocationAsync(CreateLocationDto newLocation)
         {
             try
@@ -39,6 +42,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateLocationAsync(LocationDto location)
         {
             try
@@ -52,6 +56,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteLocationByIdAsync(int locationId)
         {
             try

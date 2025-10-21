@@ -46,7 +46,7 @@ namespace EYEAPI.Repositories
         Task<EventLog?> GetEventLogByIdAsync(int logId);
         #endregion
 
-        Task<Alarm> GetAlarmByIdAsync(int alarmId);
+        Task<Alarm?> GetAlarmByIdAsync(int alarmId);
         Task AddSublocationsAsync(List<Sublocation> newSublocations);
         Task<List<EventLog>> GetEventLogsAsync(EventLogSearchParamsDto? searchParams);
         Task AddEventLogsAsync(List<EventLog> eventLogs);

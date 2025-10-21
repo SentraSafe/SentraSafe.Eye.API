@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
@@ -23,6 +24,8 @@ using EYEAPI.Hubs;
 using EYEAPI.Models.Dtos.LocationDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Entities;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +35,35 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme()
+            {
+                Reference = new OpenApiReference()
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "bearer",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -42,9 +73,10 @@ builder.Services
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidIssuers = ["https://sts.windows.net/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/",
-                "https://login.microsoftonline.com/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/v2.0"]
+                "https://login.microsoftonline.com/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/v2.0"],
+            ValidAudiences = ["api://32ca31d5-86a3-4177-a755-80c827cc93f0", "api://cf989fd8-a2c2-418f-963a-c0b4c7735e49"],
+            RoleClaimType = ClaimTypes.Role
         };
-        options.Audience = "api://32ca31d5-86a3-4177-a755-80c827cc93f0";
     });
 builder.Services.AddAuthorizationBuilder();
 
@@ -64,7 +96,7 @@ builder.Services.AddAutoMapper((serviceProvider, expression) =>
         .ForMember(x => x.Location, configurationExpression => configurationExpression.MapFrom(machine => machine.Sublocation.Location.Name))
         .ForMember(x => x.Sublocation, configurationExpression => configurationExpression.MapFrom(machine => machine.Sublocation.Name));
 }, typeof(Program).Assembly);
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options => options.ClientTimeoutInterval = TimeSpan.FromMinutes(2));
 
 builder.Services.AddSingleton<MqttClientFactory>();
 builder.Services.AddSingleton<MqttClientOptionsBuilder>(serviceProvider =>
@@ -104,6 +136,9 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseSwagger();
 app.UseSwaggerUI();

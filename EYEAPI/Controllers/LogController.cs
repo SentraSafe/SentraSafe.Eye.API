@@ -1,6 +1,7 @@
 ﻿using EYEAPI.Models.Dtos.LogDtos;
 using EYEAPI.Models.Entities;
 using EYEAPI.Services.LogService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LogController(ILogService logService) : ControllerBase
     {
         [HttpGet]
@@ -37,6 +39,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost("HandleLog")]
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> HandleLogAsync(HandleEventLogDto newEventLog)
         {
             try

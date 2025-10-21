@@ -1,5 +1,6 @@
 ﻿using EYEAPI.Models.Dtos.SublocationDtos;
 using EYEAPI.Services.SublocationService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SublocationController(ISublocationService sublocationService) : ControllerBase
     {
         [HttpGet]
@@ -23,6 +25,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostNewSublocationAsync(CreateSublocationDto newSublocation)
         {
             try
@@ -36,6 +39,7 @@ namespace EYEAPI.Controllers
         }
         
         [HttpPost("Bulk")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PostNewSublocationsAsync(List<CreateSublocationDto> newSublocations)
         {
             try
@@ -50,6 +54,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateSublocationAsync(SublocationDto location)
         {
             try
@@ -63,6 +68,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteSublocationByIdAsync(int locationId)
         {
             try

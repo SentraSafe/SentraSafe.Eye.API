@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using AutoMapper;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Enums;
 
@@ -15,5 +16,10 @@ namespace EYEAPI.Models.Entities
         public Sublocation Sublocation { get; set; }
         public ICollection<Alarm>? Alarms { get; set; }
         public ICollection<EventLog>? EventLogs { get; set; }
+        
+        [NotMapped]
+        public string? Status { get; set; }
+        [NotMapped]
+        public EventLog? LatestLog { get; set; }
     }
 }

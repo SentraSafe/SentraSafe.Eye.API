@@ -4,6 +4,7 @@ using EYEAPI.Models.Enums;
 using EYEAPI.Repositories;
 using EYEAPI.Services.LocationService;
 using EYEAPI.Services.MachineService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
@@ -13,6 +14,7 @@ namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MachineController(IMachineService machineService) : ControllerBase
     {
         [HttpGet]
@@ -44,6 +46,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> PostNewMachineAsync([FromBody] CreateMachineDto newMachine)
         {
             try
@@ -57,7 +60,8 @@ namespace EYEAPI.Controllers
             }
         }
 
-        [HttpPut]                       
+        [HttpPut]      
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> PutUpdateMachineAsync(UpdateMachineDto machine)
         {
             try
@@ -72,6 +76,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> DeleteMachineByIdAsync(int machinceId)
         {
             try

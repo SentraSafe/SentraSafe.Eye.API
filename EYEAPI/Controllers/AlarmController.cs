@@ -1,12 +1,14 @@
 ﻿using EYEAPI.Models.Dtos.AlarmDtos;
 using EYEAPI.Models.Entities;
 using EYEAPI.Services.AlarmService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EYEAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AlarmController(IAlarmService alarmService) : ControllerBase
     {
         [HttpGet]
@@ -24,6 +26,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> PostNewAlarmAsync(CreateAlarmDto newAlarm)
         {
             try
@@ -38,6 +41,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> PutUpdateAlarmAsync(CreateAlarmDto alarm)
         {
             try
@@ -52,6 +56,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> DeleteAlarmByIdAsync([FromQuery]int alarmId)
         {
             try
