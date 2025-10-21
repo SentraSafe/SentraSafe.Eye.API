@@ -195,6 +195,7 @@ namespace EYEAPI.Repositories
         public async Task AddEventLogsAsync(List<EventLog> eventLogs)
         {
             await eyeContext.EventLogs.AddRangeAsync(eventLogs);
+            await eyeContext.SaveChangesAsync();
         }
         #endregion
     }

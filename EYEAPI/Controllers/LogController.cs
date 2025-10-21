@@ -51,7 +51,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost("Bulk")]
-        public async Task<IActionResult> AddEventLogsAsync(List<EventLogDto> newEventLogs)
+        public async Task<IActionResult> AddEventLogsAsync(List<CreateEventLogDto> newEventLogs)
         {
             try
             {

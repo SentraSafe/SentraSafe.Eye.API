@@ -12,6 +12,6 @@ namespace EYEAPI.Services.LogService
         Task<EventLogDto> AddEventLogAsync(CreateEventLogDto newEventLog);
         Task HandleEventLog(HandleEventLogDto handleEventLogDto);
         Task<List<EventLogDto>> GetEventLogsAsync(EventLogSearchParamsDto searchParams);
-        Task AddEventLogsAsync(List<EventLogDto> eventLogs);
+        Task AddEventLogsAsync(List<CreateEventLogDto> eventLogs);
     }
 }

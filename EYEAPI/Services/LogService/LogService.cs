@@ -31,7 +31,7 @@ namespace EYEAPI.Services.LogService
             mapper.Map<List<EventLogDto>>(await eyeRepository.GetEventLogsAsync(searchParams));
         
 
-        public async Task AddEventLogsAsync(List<EventLogDto> eventLogs) =>    
+        public async Task AddEventLogsAsync(List<CreateEventLogDto> eventLogs) =>    
             await eyeRepository.AddEventLogsAsync(mapper.Map<List<EventLog>>(eventLogs));
     }
 }
