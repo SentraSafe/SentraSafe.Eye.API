@@ -69,8 +69,10 @@ namespace EYEAPI.BackgroundServices
                 TimeCreated = DateTime.Now
             }).ToList();
             await eyeRepository.AddEventLogsAsync(eventLogs);
+            
+            await alarmHubContext.Clients.All.SendAsync("notifications", eventLogs);
 
-            await alarmHubContext.Clients.Groups($"{AlarmHub.AlarmsGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("update", eventLogs);
+            await alarmHubContext.Clients.Groups($"{AlarmHub.AlarmsGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("updateEvents", eventLogs);
             await machineHubContext.Clients.Groups($"{MachineHub.MachineGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("update", telemetry);
         }
     }
