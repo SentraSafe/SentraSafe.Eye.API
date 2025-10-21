@@ -5,7 +5,7 @@ namespace EYEAPI.Models.Entities
     public class Measurement
     {
         [BsonElement("readingTime")]
-        public DateTime ReadingTime { get; set; }
+        public long ReadingTime { get; set; }
         [BsonElement("measurementType")]
         public int MeasurementType { get; set; }
         [BsonElement("device")]

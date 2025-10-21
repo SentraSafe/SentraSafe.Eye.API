@@ -7,19 +7,39 @@ using System.Text.Json;
 public class MqttService(MqttClientFactory factory) : IMqttService
 {
     private readonly IMqttClient _client = factory.CreateMqttClient();
+    private readonly SemaphoreSlim _connectionLock = new SemaphoreSlim(1, 1);
 
 
     public async Task ConnectAsync(MqttClientOptions options)
     {
-        if (!_client.IsConnected)
+        await _connectionLock.WaitAsync();
+        try
         {
-            await _client.ConnectAsync(options);
+            if (!_client.IsConnected)
+            {
+                await _client.ConnectAsync(options);
+            }
+        }
+        finally
+        {
+            _connectionLock.Release();
         }
     }
 
     public async Task ReconnectAsync()
     {
-        await _client.ReconnectAsync();
+        await _connectionLock.WaitAsync();
+        try
+        {
+            if (!_client.IsConnected)
+            {
+                await _client.ReconnectAsync();
+            }
+        }
+        finally
+        {
+            _connectionLock.Release();
+        }
     }
 
     public async Task SubscribeAsync(string topic, MqttQualityOfServiceLevel qos, Func<MqttApplicationMessageReceivedEventArgs, Task> callback)
@@ -41,12 +61,12 @@ public class MqttService(MqttClientFactory factory) : IMqttService
     {
         byte[] serializedMessage = JsonSerializer.SerializeToUtf8Bytes(payload);
         MqttApplicationMessage mqttMessage = factory.CreateApplicationMessageBuilder()
-                                                    .WithTopic(topic)
-                                                    .WithContentType("application/json")
-                                                    .WithPayload(serializedMessage)
-                                                    .WithQualityOfServiceLevel(qos)
-                                                    .WithRetainFlag(retain)
-                                                    .Build();
+            .WithTopic(topic)
+            .WithContentType("application/json")
+            .WithPayload(serializedMessage)
+            .WithQualityOfServiceLevel(qos)
+            .WithRetainFlag(retain)
+            .Build();
         await _client.PublishAsync(mqttMessage);
     }
 

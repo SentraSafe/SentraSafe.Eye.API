@@ -82,7 +82,7 @@ builder.Services.AddSingleton<MqttClientOptionsBuilder>(serviceProvider =>
 builder.Services.AddDbContext<EyeContext>(x => x.UseSqlServer("Name=Eye"));
 
 //Custom Services
-builder.Services.AddTransient<IMqttService, MqttService>();
+builder.Services.AddSingleton<IMqttService, MqttService>();
 builder.Services.AddScoped<IMachineService, MachineService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAlarmService, AlarmService>();

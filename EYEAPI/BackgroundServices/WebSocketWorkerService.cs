@@ -41,17 +41,18 @@ namespace EYEAPI.BackgroundServices
                 {
                     await mqttService.ReconnectAsync();
                 }
+
                 await Task.Delay(5000, stoppingToken);
             }
         }
 
         private async Task OnMessageReceived(MqttApplicationMessageReceivedEventArgs eventArgs)
         {
+            Console.WriteLine("Message received");
             var payload = eventArgs.ApplicationMessage.ConvertPayloadToString();
             Measurement? telemetry = JsonSerializer.Deserialize<Measurement>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             if (telemetry == null) return;
-
             using IServiceScope serviceScope = scopeFactory.CreateScope();
 
             IEyeRepository eyeRepository = serviceScope.ServiceProvider.GetRequiredService<IEyeRepository>();
@@ -71,7 +72,6 @@ namespace EYEAPI.BackgroundServices
 
             await alarmHubContext.Clients.Groups($"{AlarmHub.AlarmsGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("update", eventLogs);
             await machineHubContext.Clients.Groups($"{MachineHub.MachineGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("update", telemetry);
-            return;
         }
     }
 }
