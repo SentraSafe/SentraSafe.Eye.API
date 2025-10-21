@@ -49,5 +49,19 @@ namespace EYEAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("Bulk")]
+        public async Task<IActionResult> AddEventLogsAsync(List<EventLogDto> newEventLogs)
+        {
+            try
+            {
+                await logService.AddEventLogsAsync(newEventLogs);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
