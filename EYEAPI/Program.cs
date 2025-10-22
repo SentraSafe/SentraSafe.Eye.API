@@ -74,7 +74,7 @@ builder.Services
         {
             ValidIssuers = ["https://sts.windows.net/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/",
                 "https://login.microsoftonline.com/2dfd1f89-3b0a-454b-9ec5-778b2f3140d5/v2.0"],
-            ValidAudiences = ["api://32ca31d5-86a3-4177-a755-80c827cc93f0", "api://cf989fd8-a2c2-418f-963a-c0b4c7735e49", "api://a8026968-6d96-4f3f-809f-ff65685f72ec", "a8026968-6d96-4f3f-809f-ff65685f72ec"],
+            ValidAudiences = ["api://32ca31d5-86a3-4177-a755-80c827cc93f0", "api://cf989fd8-a2c2-418f-963a-c0b4c7735e49", "api://a8026968-6d96-4f3f-809f-ff65685f72ec", "a8026968-6d96-4f3f-809f-ff65685f72ec", "api://be974e6b-97c7-4738-9ce0-f9f3816fed65"],
             RoleClaimType = ClaimTypes.Role
         };
     });
