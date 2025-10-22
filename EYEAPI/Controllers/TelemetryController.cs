@@ -19,4 +19,10 @@ public class TelemetryController(ITelemetryService telemetryService) : Controlle
     {
         return Ok(await telemetryService.GetAnalyticsTelemetry(searchParams));
     }
+    
+    [HttpGet("GetLatestDistinctMeasurementByIdAsync")]
+    public async Task<IActionResult> GetLatestDistinctMeasurementByIdAsync(int id)
+    {
+        return Ok(await telemetryService.GetLatestDistinctMeasurementByIdAsync(id));
+    }
 }

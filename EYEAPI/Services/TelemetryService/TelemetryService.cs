@@ -34,4 +34,13 @@ public class TelemetryService(WarehouseContext context) : ITelemetryService
             .WhereIfNotNull(searchParams?.LocationId, telemetry => telemetry.LocationId == searchParams.LocationId)
             .ToListAsync();
     }
+    
+    public async Task<List<AnalyticsTelemetry>> GetLatestDistinctMeasurementByIdAsync(int machineId)
+    {
+        return await context.AnalyticsTelemetry
+            .Where(x => x.MachineId == machineId)
+            .GroupBy(x => x.MeasurementType)
+            .Select(g => g.OrderByDescending(x => x.ReadingTime).First())
+            .ToListAsync();
+    }
 }
