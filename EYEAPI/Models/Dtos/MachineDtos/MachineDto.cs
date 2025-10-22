@@ -10,7 +10,7 @@ namespace EYEAPI.Models.Dtos.MachineDtos
         public string Name { get; set; }
         public string Location { get; set; }
         public string Sublocation { get; set; }
-        public MachineType MachineType { get; set; }
+        public MachineType Type { get; set; }
         public string? Status { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace EYEAPI.Repositories
             List<Machine> machines = await eyeContext.Machines.WhereIfNotNull(searchParams.Name, machine => machine.Name.Contains(searchParams.Name))
                 .WhereIfNotNull(searchParams.LocationId, machine => machine.Sublocation.Location.Id == searchParams.LocationId)
                 .WhereIfNotNull(searchParams.SublocationId, machine => machine.Sublocation.Id == searchParams.SublocationId)
-                .WhereIfNotNull(searchParams.MachineType, machine => machine.Type == searchParams.MachineType)
+                .WhereIfNotNull(searchParams.Type, machine => machine.Type == searchParams.Type)
                 .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
                 .Include(x => x.EventLogs)
                 .Select(x => new Machine()
