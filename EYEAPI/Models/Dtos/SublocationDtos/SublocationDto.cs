@@ -1,5 +1,6 @@
 ﻿using EYEAPI.Models.Entities;
 using AutoMapper;
+using EYEAPI.Models.Dtos.MachineDtos;
 
 namespace EYEAPI.Models.Dtos.SublocationDtos
 {
@@ -9,5 +10,6 @@ namespace EYEAPI.Models.Dtos.SublocationDtos
         public int Id { get; set; }
         public string Name { get; set; }
         public int LocationId { get; set; }
+        public List<MachineDto> Machines { get; set; }
     }
 }

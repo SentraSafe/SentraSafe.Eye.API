@@ -12,11 +12,11 @@ namespace EYEAPI.Controllers
     public class SublocationController(ISublocationService sublocationService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetSublocationsAsync(int sublocationId)
+        public async Task<IActionResult> GetSublocationsAsync(int locationId)
         {
             try
             {
-                return Ok(await sublocationService.GetSublocationByLocationAsync(sublocationId));
+                return Ok(await sublocationService.GetSublocationByLocationAsync(locationId));
             }
             catch (Exception ex)
             {

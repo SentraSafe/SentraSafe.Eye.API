@@ -93,6 +93,7 @@ namespace EYEAPI.Repositories
         public async Task<List<Sublocation>> GetSublocationsByLocationAsync(int locationId) =>
             await eyeContext.Sublocations
                 .AsNoTracking()
+                .Include(s => s.Machines)
                 .Where(s => s.LocationId == locationId)
                 .ToListAsync();
 

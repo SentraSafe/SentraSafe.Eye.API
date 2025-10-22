@@ -6,7 +6,7 @@ namespace EYEAPI.Services.SublocationService
 {
     public interface ISublocationService
     {
-        Task<List<Sublocation>> GetSublocationByLocationAsync(int locationId);
+        Task<List<SublocationDto>> GetSublocationByLocationAsync(int locationId);
         Task<Sublocation> AddSublocationAsync(CreateSublocationDto createSublocation);
         Task DeleteSublocationByIdAsync(int sublocationId);
         Task<Sublocation> UpdateSublocationAsync(SublocationDto sublocation);
