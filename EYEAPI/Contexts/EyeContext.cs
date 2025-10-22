@@ -10,6 +10,7 @@ namespace EYEAPI.Contexts
             
         }
         public DbSet<Machine> Machines { get; set; }
+        public DbSet<MachineMetaData> MachineMetaData { get; set; }
         public DbSet<Location> Locations{ get; set; }
         public DbSet<Sublocation> Sublocations{ get; set; }
         public DbSet<Alarm> Alarms{ get; set; }

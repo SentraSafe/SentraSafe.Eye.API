@@ -10,5 +10,6 @@ namespace EYEAPI.Models.Dtos.MachineDtos
         public string Name { get; set; }
         public MachineType Type { get; set; }
         public int SublocationId { get; set; }
+        public int? MetaDataId { get; set; }
     }
 }

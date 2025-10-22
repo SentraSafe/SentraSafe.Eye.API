@@ -51,5 +51,6 @@ namespace EYEAPI.Repositories
         Task<List<EventLog>> GetEventLogsAsync(EventLogSearchParamsDto? searchParams);
         Task AddEventLogsAsync(List<EventLog> eventLogs);
         Task AddEventLogAsync(EventLog newLog);
+        Task AddMachineMetaDataAsync(MachineMetaData metaData);
     }
 }

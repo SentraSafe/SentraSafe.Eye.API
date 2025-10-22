@@ -25,6 +25,7 @@ namespace EYEAPI.Repositories
                 .WhereIfNotNull(searchParams.SublocationId, machine => machine.Sublocation.Id == searchParams.SublocationId)
                 .WhereIfNotNull(searchParams.Type, machine => machine.Type == searchParams.Type)
                 .Include(machine => machine.Sublocation).ThenInclude(sublocation => sublocation.Location)
+                .Include(x => x.MetaData)
                 .Include(x => x.EventLogs)
                 .Select(x => new Machine()
                 {
@@ -48,6 +49,7 @@ namespace EYEAPI.Repositories
                 .Include(m => m.Sublocation)
                 .ThenInclude(s => s.Location)
                 .Include(x => x.EventLogs)
+                .Include(x => x.MetaData)
                 .Select(x => new Machine()
                 {
                     Name = x.Name,
@@ -63,6 +65,12 @@ namespace EYEAPI.Repositories
         public async Task AddMachineAsync(Machine newMachine)
         {
             await eyeContext.Machines.AddAsync(newMachine);
+            await eyeContext.SaveChangesAsync();
+        }
+        
+        public async Task AddMachineMetaDataAsync(MachineMetaData metaData)
+        {
+            await eyeContext.MachineMetaData.AddAsync(metaData);
             await eyeContext.SaveChangesAsync();
         }
 
@@ -239,6 +247,8 @@ namespace EYEAPI.Repositories
                 .ThenByDescending(x => x.Severity)
                 .ThenByDescending(x => x.TimeCreated).ToListAsync();
         }
+        
+        
 
         public async Task AddEventLogsAsync(List<EventLog> eventLogs)
         {

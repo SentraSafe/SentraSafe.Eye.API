@@ -14,8 +14,21 @@ namespace EYEAPI.Services.MachineService
 
         public async Task<MachineDto?> AddMachineAsync(CreateMachineDto createMachine)
         {
-            Machine newMachine = mapper.Map<Machine>(createMachine);
+            Machine newMachine = new Machine()
+            {
+                Name = createMachine.Name,
+                SublocationId = createMachine.SublocationId,
+                Type = createMachine.Type,
+            };
             await eyeRepository.AddMachineAsync(newMachine);
+            if (createMachine.MetaData != null)
+            {
+                await eyeRepository.AddMachineMetaDataAsync(new MachineMetaData()
+                {
+                    MachineId = newMachine.Id, TotalMemory = createMachine.MetaData.TotalMemory, TotalStorage = createMachine.MetaData.TotalStorage
+                });
+            }
+
             return mapper.Map<MachineDto>(await eyeRepository.GetMachineByIdAsync(newMachine.Id));
         }
 
@@ -25,6 +38,7 @@ namespace EYEAPI.Services.MachineService
             await eyeRepository.UpdateMachineAsync(editMachine);
             return mapper.Map<MachineDto>(await eyeRepository.GetMachineByIdAsync(editMachine.Id));
         }
+
         public async Task DeleteMachineByIdAsync(int machineId) => await eyeRepository.DeleteMachineByIdAsync(machineId);
     }
 }

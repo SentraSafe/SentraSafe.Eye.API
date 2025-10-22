@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using EYEAPI.Models.Enums;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace EYEAPI.Models.Entities
 {
@@ -7,7 +8,7 @@ namespace EYEAPI.Models.Entities
         [BsonElement("readingTime")]
         public long ReadingTime { get; set; }
         [BsonElement("measurementType")]
-        public int MeasurementType { get; set; }
+        public MeasurementType MeasurementType { get; set; }
         [BsonElement("device")]
         public string Device { get; set; }
         [BsonElement("value")]

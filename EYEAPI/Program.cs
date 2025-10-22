@@ -96,6 +96,8 @@ builder.Services.AddAutoMapper((serviceProvider, expression) =>
     expression.CreateMap<Machine, MachineDto>()
         .ForMember(x => x.Location, configurationExpression => configurationExpression.MapFrom(machine => machine.Sublocation.Location.Name))
         .ForMember(x => x.Sublocation, configurationExpression => configurationExpression.MapFrom(machine => machine.Sublocation.Name));
+    expression.CreateMap<CreateMachineDto, Machine>()
+        .ForMember(dest => dest.MetaData, opt => opt.Ignore());
 }, typeof(Program).Assembly);
 builder.Services.AddSignalR(options => options.ClientTimeoutInterval = TimeSpan.FromMinutes(2));
 

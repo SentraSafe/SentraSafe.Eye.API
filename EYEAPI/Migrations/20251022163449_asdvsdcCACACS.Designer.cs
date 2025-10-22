@@ -4,6 +4,7 @@ using EYEAPI.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EYEAPI.Migrations
 {
     [DbContext(typeof(EyeContext))]
-    partial class EyeContextModelSnapshot : ModelSnapshot
+    [Migration("20251022163449_asdvsdcCACACS")]
+    partial class asdvsdcCACACS
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,7 +149,9 @@ namespace EYEAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MetaDataId");
+                    b.HasIndex("MetaDataId")
+                        .IsUnique()
+                        .HasFilter("[MetaDataId] IS NOT NULL");
 
                     b.HasIndex("SublocationId");
 
@@ -164,15 +169,13 @@ namespace EYEAPI.Migrations
                     b.Property<int>("MachineId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TotalMemory")
+                    b.Property<int>("TotalMemory")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TotalStorage")
+                    b.Property<int>("TotalStorage")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MachineId");
 
                     b.ToTable("MachineMetaData");
                 });
@@ -230,8 +233,8 @@ namespace EYEAPI.Migrations
             modelBuilder.Entity("EYEAPI.Models.Entities.Machine", b =>
                 {
                     b.HasOne("EYEAPI.Models.Entities.MachineMetaData", "MetaData")
-                        .WithMany()
-                        .HasForeignKey("MetaDataId");
+                        .WithOne("Machine")
+                        .HasForeignKey("EYEAPI.Models.Entities.Machine", "MetaDataId");
 
                     b.HasOne("EYEAPI.Models.Entities.Sublocation", "Sublocation")
                         .WithMany("Machines")
@@ -242,17 +245,6 @@ namespace EYEAPI.Migrations
                     b.Navigation("MetaData");
 
                     b.Navigation("Sublocation");
-                });
-
-            modelBuilder.Entity("EYEAPI.Models.Entities.MachineMetaData", b =>
-                {
-                    b.HasOne("EYEAPI.Models.Entities.Machine", "Machine")
-                        .WithMany()
-                        .HasForeignKey("MachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Machine");
                 });
 
             modelBuilder.Entity("EYEAPI.Models.Entities.Sublocation", b =>
@@ -281,6 +273,12 @@ namespace EYEAPI.Migrations
                     b.Navigation("Alarms");
 
                     b.Navigation("EventLogs");
+                });
+
+            modelBuilder.Entity("EYEAPI.Models.Entities.MachineMetaData", b =>
+                {
+                    b.Navigation("Machine")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EYEAPI.Models.Entities.Sublocation", b =>

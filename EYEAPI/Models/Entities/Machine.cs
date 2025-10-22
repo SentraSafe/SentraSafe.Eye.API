@@ -13,6 +13,9 @@ namespace EYEAPI.Models.Entities
         public string Name { get; set; }
         public MachineType Type { get; set; }
         public int SublocationId { get; set; }
+        public int? MetaDataId { get; set; }
+        [ForeignKey(nameof(MetaDataId))]
+        public MachineMetaData? MetaData { get; set; }
         public Sublocation Sublocation { get; set; }
         public ICollection<Alarm>? Alarms { get; set; }
         public ICollection<EventLog>? EventLogs { get; set; }
