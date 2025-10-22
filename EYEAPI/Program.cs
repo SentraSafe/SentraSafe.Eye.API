@@ -24,6 +24,7 @@ using EYEAPI.Hubs;
 using EYEAPI.Models.Dtos.LocationDtos;
 using EYEAPI.Models.Dtos.MachineDtos;
 using EYEAPI.Models.Entities;
+using EYEAPI.Services.TelemetryService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 
@@ -112,10 +113,12 @@ builder.Services.AddSingleton<MqttClientOptionsBuilder>(serviceProvider =>
         .WithWillRetain();
 });
 builder.Services.AddDbContext<EyeContext>(x => x.UseSqlServer("Name=Eye"));
+builder.Services.AddDbContext<WarehouseContext>(x => x.UseSqlServer("Name=Warehouse"));
 
 //Custom Services
 builder.Services.AddSingleton<IMqttService, MqttService>();
 builder.Services.AddScoped<IMachineService, MachineService>();
+builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAlarmService, AlarmService>();
 builder.Services.AddScoped<ISublocationService, SublocationService>();
@@ -123,6 +126,12 @@ builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IEyeRepository, EyeRepository>();
 builder.Services.AddHostedService<SensorWorkerService>();
 builder.Services.AddHostedService<WebSocketWorkerService>();
+
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+});
+
 
 builder.Services.AddCors(options =>
 {
