@@ -57,7 +57,8 @@ namespace EYEAPI.Repositories
                     Type = x.Type,
                     SublocationId = x.SublocationId,
                     Id = x.Id,
-                    Status = x.EventLogs != null && x.EventLogs.OrderByDescending(y => y.TimeCreated).First().TimeCreated < thresholdDate ? "Healthy" : "Unhealty"
+                    Status = x.EventLogs != null && x.EventLogs.OrderByDescending(y => y.TimeCreated).First().TimeCreated < thresholdDate ? "Healthy" : "Unhealty",
+                    MetaData = x.MetaData
                 })
                 .FirstOrDefaultAsync(m => m.Id == machineId);
         }
