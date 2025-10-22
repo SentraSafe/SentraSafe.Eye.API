@@ -233,6 +233,7 @@ namespace EYEAPI.Repositories
                 .WhereIfNotNull(searchParams?.HandledFrom, log => log.HandledAt >= searchParams.HandledFrom)
                 .WhereIfNotNull(searchParams?.HandledTo, log => log.HandledAt <= searchParams.HandledTo)
                 .WhereIfNotNull(searchParams?.AlarmIdNotNull, log => log.AlarmId != null)
+                .WhereIfNotNull(searchParams?.LocationId, log => log.Machine.Sublocation.Location.Id == searchParams.LocationId)
                 .OrderBy(x => x.IsHandled)
                 .ThenByDescending(x => x.Severity)
                 .ThenByDescending(x => x.TimeCreated).ToListAsync();

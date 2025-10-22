@@ -16,5 +16,6 @@ namespace EYEAPI.Models.Dtos.LogDtos
         public DateTime? HandledFrom { get; set; }
         public DateTime? HandledTo { get; set; }
         public bool? AlarmIdNotNull { get; set; }
+        public int? LocationId { get; set; }
     }
 }
