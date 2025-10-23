@@ -50,6 +50,8 @@ namespace EYEAPI.BackgroundServices
         {
             var payload = eventArgs.ApplicationMessage.ConvertPayloadToString();
             Measurement? telemetry = JsonSerializer.Deserialize<Measurement>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            Console.WriteLine(telemetry.Device);
+            Thread.Sleep(600000);
             await mongoClient.GetDatabase("Eye").GetCollection<Measurement>("Telemetry").InsertOneAsync(telemetry);
 
             return;
