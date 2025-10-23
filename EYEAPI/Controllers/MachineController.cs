@@ -46,6 +46,7 @@ namespace EYEAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> PostNewMachineAsync([FromBody] CreateMachineDto newMachine)
         {
             try
