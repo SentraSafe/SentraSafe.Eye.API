@@ -1,11 +1,13 @@
 using EYEAPI.Models.Dtos.TelemtryDtos;
 using EYEAPI.Services.TelemetryService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EYEAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize("Analytics")]
 public class TelemetryController(ITelemetryService telemetryService) : ControllerBase
 {
     [HttpGet("GetTelemetry")]
