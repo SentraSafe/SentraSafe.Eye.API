@@ -25,7 +25,7 @@ namespace EYEAPI.BackgroundServices
         {
             Console.WriteLine("Starting Sensor Worker Service");
             var brokerSettings = appSettings.Value.MqttBroker;
-            var x = mqttClientOptions.WithCredentials(brokerSettings.Users[0], brokerSettings.Secrets[0]);
+            var x = mqttClientOptions.WithCredentials(brokerSettings.Users[0], brokerSettings.Secrets[0]).WithClientId(nameof(SensorWorkerService)).WithCleanSession(false);
 
             await mqttService.ConnectAsync(x.Build());
             await mqttService.SubscribeAsync("measurement/#", MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);
@@ -50,11 +50,6 @@ namespace EYEAPI.BackgroundServices
         {
             var payload = eventArgs.ApplicationMessage.ConvertPayloadToString();
             Measurement? telemetry = JsonSerializer.Deserialize<Measurement>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            Console.WriteLine(telemetry.Device);
-            Console.WriteLine(telemetry.MachineId);
-            Console.WriteLine(telemetry.MeasurementType);
-            Console.WriteLine(telemetry.ReadingTime);
-            Console.WriteLine(telemetry.Location);
             await mongoClient.GetDatabase("Eye").GetCollection<Measurement>("Telemetry").InsertOneAsync(telemetry);
 
             return;

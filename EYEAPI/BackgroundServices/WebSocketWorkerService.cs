@@ -28,7 +28,7 @@ namespace EYEAPI.BackgroundServices
         {
             Console.WriteLine("Starting WebSocket Worker Service");
             var brokerSettings = appSettings.Value.MqttBroker;
-            var x = mqttClientOptions.WithCredentials(brokerSettings.Users[1], brokerSettings.Secrets[1]);
+            var x = mqttClientOptions.WithCredentials(brokerSettings.Users[1], brokerSettings.Secrets[1]).WithClientId(nameof(WebSocketWorkerService)).WithCleanSession(false);
 
             await mqttService.ConnectAsync(x.Build());
             await mqttService.SubscribeAsync("measurement/#", MqttQualityOfServiceLevel.AtLeastOnce, OnMessageReceived);
