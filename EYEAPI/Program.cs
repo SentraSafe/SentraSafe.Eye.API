@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -99,7 +100,10 @@ builder.Services.AddAutoMapper((serviceProvider, expression) =>
     expression.CreateMap<CreateMachineDto, Machine>()
         .ForMember(dest => dest.MetaData, opt => opt.Ignore());
 }, typeof(Program).Assembly);
-builder.Services.AddSignalR(options => options.ClientTimeoutInterval = TimeSpan.FromMinutes(2));
+builder.Services.AddSignalR(options => options.ClientTimeoutInterval = TimeSpan.FromMinutes(2)).AddJsonProtocol(options =>
+{
+    options.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddSingleton<MqttClientFactory>();
 builder.Services.AddSingleton<MqttClientOptionsBuilder>(serviceProvider =>

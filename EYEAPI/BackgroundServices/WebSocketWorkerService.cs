@@ -4,10 +4,12 @@ using MQTTnet.Protocol;
 using MQTTnet;
 using MongoDB.Driver;
 using System.Text.Json;
+using AutoMapper;
 using EYEAPI.Contexts;
 using EYEAPI.Models.Entities;
 using EYEAPI.Hubs;
 using EYEAPI.Models.Dtos.AlarmDtos;
+using EYEAPI.Models.Dtos.LogDtos;
 using EYEAPI.Models.Enums;
 using EYEAPI.Repositories;
 using Microsoft.AspNetCore.SignalR;
@@ -22,7 +24,8 @@ namespace EYEAPI.BackgroundServices
         MqttClientOptionsBuilder mqttClientOptions,
         IMqttService mqttService,
         IOptions<AppSettings> appSettings,
-        IServiceScopeFactory scopeFactory) : BackgroundService
+        IServiceScopeFactory scopeFactory,
+        IMapper mapper) : BackgroundService
     {
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
@@ -67,8 +70,8 @@ namespace EYEAPI.BackgroundServices
                 Sublocation = x.Sublocation,
                 Type = x.Type,
                 SublocationId = x.SublocationId,
-                LatestLog = x.EventLogs != null ? x.EventLogs.OrderByDescending(y => y.TimeCreated).First(y => y.Alarm != null && y.Alarm.ValueType == telemetry.MeasurementType) : null,
-                Alarms = x.Alarms != null ? x.Alarms.Where(y => y.ValueType == telemetry.MeasurementType).ToList() : null
+                LatestLog = x.EventLogs.OrderByDescending(y => y.TimeCreated).FirstOrDefault(y => y.Alarm != null && y.Alarm.ValueType == telemetry.MeasurementType),
+                Alarms = x.Alarms.Where(y => y.ValueType == telemetry.MeasurementType).ToList()
             }).FirstOrDefaultAsync(m => m.Id == telemetry.MachineId);
 
             List<Alarm>? alarms = machine?.Alarms?.Where(x => (machine.LatestLog == null || machine.LatestLog.IsHandled) || (machine.LatestLog.Severity == Severity.Warning && x.Severity > Severity.Warning)).ToList();
@@ -83,12 +86,13 @@ namespace EYEAPI.BackgroundServices
                 TimeCreated = DateTime.Now
             }).ToList();
 
-            if (eventLogs != null)
+            if (eventLogs?.Count > 0)
             {
                 eyeContext.EventLogs.AddRange(eventLogs);
                 await eyeContext.SaveChangesAsync();
-                await alarmHubContext.Clients.All.SendAsync("notifications", eventLogs);
-                await alarmHubContext.Clients.Groups($"{AlarmHub.AlarmsGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("updateEvents", eventLogs);
+                List<EventLogDto> notifications = mapper.Map<List<EventLogDto>>(eventLogs);
+                await alarmHubContext.Clients.All.SendAsync("notifications", notifications);
+                await alarmHubContext.Clients.Groups($"{AlarmHub.AlarmsGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("updateEvents", notifications);
             }
 
             await machineHubContext.Clients.Groups($"{MachineHub.MachineGroupPrefix}{telemetry.MachineId.ToString()}").SendAsync("update", telemetry);
