@@ -14,6 +14,8 @@ namespace EYEAPI.Hubs;
 
 public class AlarmHub(ILogService logService, EyeContext eyeContext, IMapper mapper) : Hub
 {
+    #region alarmSubscrition
+
     public static string AlarmGroupPrefix = "machine_";
     public static string AlarmsGroupPrefix = "machines_";
 
@@ -27,6 +29,8 @@ public class AlarmHub(ILogService logService, EyeContext eyeContext, IMapper map
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{AlarmGroupPrefix}{group}");
     }
 
+    #endregion
+
     public async Task<List<EventLogDto>> SubscribeToAlarms(string[] groups)
     {
         foreach (string group in groups)
@@ -38,14 +42,42 @@ public class AlarmHub(ILogService logService, EyeContext eyeContext, IMapper map
             return machineId;
         }).Where(x => x != 0).ToArray();
 
-        return (await logService.GetEventLogsAsync(new EventLogSearchParamsDto() { MachineIds = ids, Severity = Severity.Warning, AlarmIdNotNull = true })).DistinctBy(x => x.MachineId).ToList();
+        return (await logService.GetEventLogsAsync(new EventLogSearchParamsDto()
+        {
+            MachineIds = ids,
+            Severity = Severity.Warning,
+            AlarmIdNotNull = true
+        })).DistinctBy(x => x.MachineId).ToList();
     }
-    
+
     public async Task<List<EventLogDto>> SubscribeToNotifications()
     {
-        List<EventLog?> eventLogs = await eyeContext.Machines.Select(x => x.EventLogs != null ? x.EventLogs.OrderByDescending(y => y.TimeCreated).First(y => y.Alarm != null) : null).ToListAsync();
+        var notificationList = await eyeContext.EventLogs
+            .Where(x => x.AlarmId != null)
+            .Include(x => x.Alarm)
+            .Include(x => x.Machine)
+            .GroupBy(x => x.Alarm.ValueType)
+            .Select(group => new 
+            {
+                ValueType = group.Key,
+                EventLog = group.OrderByDescending(x => x.Severity).FirstOrDefault()
+            })
+            .ToListAsync();
 
-        return mapper.Map<List<EventLogDto>>( eventLogs.Where(x => x != null && !x.IsHandled && x.Severity > Severity.Information).ToList());
+        return mapper.Map<List<EventLogDto>>( mapper.Map<List<EventLogDto>>(notificationList.Select(x => new EventLogDto()
+        {
+            Severity = x.EventLog.Severity,
+            IsHandled = x.EventLog.IsHandled,
+            MachineId = x.EventLog.MachineId,
+            AlarmId = x.EventLog.AlarmId,
+            HandledAt = x.EventLog.HandledAt,
+            HandledBy = x.EventLog.HandledBy,
+            HandledFeedback = x.EventLog.HandledFeedback,
+            Id = x.EventLog.Id,
+            Message = x.EventLog.Message,
+            Source = x.EventLog.Source,
+            TimeCreated = x.EventLog.TimeCreated
+        }).ToList()));
     }
 
     public async Task UnsubscribeToAlarms(string[] groups)
