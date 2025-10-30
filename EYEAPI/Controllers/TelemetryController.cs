@@ -7,7 +7,7 @@ namespace EYEAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize("Analytics")]
+[Authorize(Roles = "Analytics")]
 public class TelemetryController(ITelemetryService telemetryService) : ControllerBase
 {
     [HttpGet("GetTelemetry")]
